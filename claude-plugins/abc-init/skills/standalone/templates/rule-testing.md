@@ -1,0 +1,8 @@
+---
+paths:
+  - "**/{{GLOB-PATTERN-MATCHING-ONLY-A-TEST-FILE}}"
+---
+
+## {{PROJECT-NAME}} {{TESTING-FRAMEWORK-NAME}} conventions:
+
+{{TESTING-CONVENTIONS}}

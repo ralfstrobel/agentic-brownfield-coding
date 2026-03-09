@@ -1,0 +1,30 @@
+{
+    "$schema": "https://json.schemastore.org/claude-code-settings.json",
+    "model": "sonnet",
+    "effortLevel": "medium",
+    "permissions": {
+        "allow": [
+            "Edit(~/.claude/plans/**)",
+
+            "Bash(ls:*)",
+            "Bash(find:*)",
+            "Bash(cat:*)",
+            "Bash(grep:*)",
+            "Bash(diff:*)",
+            "Bash(wc:*)",
+
+            "Bash(git:status)",
+            "Bash(git:diff)",
+            "Bash(git:log)",
+
+            "Edit({{SUB-PROJECT-PATH}}/**)",
+            "Bash(rm:{{SUB-PROJECT-PATH}}/*)",
+            "Bash(mkdir:{{SUB-PROJECT-PATH}}/*)",
+            "Bash(rmdir:{{SUB-PROJECT-PATH}}/*)"
+        ]
+    },
+    "disableBypassPermissionsMode": "disable",
+    "includeCoAuthoredBy": false,
+    "autoMemoryEnabled": false,
+    "companyAnnouncements": ["Welcome to Claude Code development for {{PROJECT-NAME}}!"]
+}

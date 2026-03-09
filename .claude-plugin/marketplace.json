@@ -1,0 +1,19 @@
+{
+    "name": "agentic-brownfield-coding",
+    "metadata": {
+        "description": "Claude Code initialization and workflows for complex brownfield codebases"
+    },
+    "owner": {
+        "name": "Ralf Strobel"
+    },
+    "plugins": [
+        {
+            "name": "abc-init",
+            "source": "./claude-plugins/abc-init"
+        },
+        {
+            "name": "abc",
+            "source": "./claude-plugins/abc"
+        }
+    ]
+}

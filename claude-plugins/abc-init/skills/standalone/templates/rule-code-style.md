@@ -1,0 +1,7 @@
+---
+paths:
+  - "**/*.{{PROGRAMMING-LANGUAGE-FILE-EXTENSION}}"
+---
+
+## {{PROJECT-NAME}} {{PROJECT-PROGRAMMING-LANGUAGE}} code style:
+- {{STYLE-RULE}}

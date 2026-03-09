@@ -1,0 +1,9 @@
+.DS_Store
+*:Zone.Identifier
+
+/.env
+/.vscode/
+/.idea/
+
+CLAUDE.md
+/.claude/
