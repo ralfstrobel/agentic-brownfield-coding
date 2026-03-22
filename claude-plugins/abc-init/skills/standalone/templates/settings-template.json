@@ -4,24 +4,19 @@
     "effortLevel": "medium",
     "permissions": {
         "allow": [
-            "Edit(~/.claude/plans/**)",
-
-            "Bash(ls:*)",
-            "Bash(find:*)",
-            "Bash(cat:*)",
-            "Bash(grep:*)",
-            "Bash(diff:*)",
-            "Bash(wc:*)",
-
-            "Bash(git:status)",
-            "Bash(git:diff)",
-            "Bash(git:log)",
-
-            "Edit({{SOURCE-PATH}}/**)",
-            "Bash(rm:{{SOURCE-PATH}}/*)",
-            "Bash(mkdir:{{SOURCE-PATH}}/*)",
-            "Bash(rmdir:{{SOURCE-PATH}}/*)"
+            "Edit({{SOURCE-PATH}}/**)"
         ]
+    },
+    "sandbox": {
+        "enabled": true,
+        "autoAllowBashIfSandboxed": true,
+        "allowUnsandboxedCommands": false,
+        "filesystem": {
+            "denyWrite": [
+                ".git",
+                "{{GITIGNORE-EXCLUSIONS}}"
+            ]
+        }
     },
     "disableBypassPermissionsMode": "disable",
     "includeCoAuthoredBy": false,

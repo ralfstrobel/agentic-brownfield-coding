@@ -81,9 +81,9 @@ Go through **every** sub-project established in general question 6 and repeat th
 ### 3a — Claude Code Settings
 
 1. Copy the [template](./templates/settings-template.json) to `<project-dir>/.claude/settings.json`
-2. Duplicate the block of permissions with the `{{SUB-PROJECT-PATH}}` placeholder for each sub-project.
-3. Replace general `{{PLACEHOLDERS}}` with answers from the general user interview questions.
-4. Add additional `Bash` permissions for known linter or testing tool commands.
+2. Duplicate the permissions with the `{{SUB-PROJECT-PATH}}` placeholder for each sub-project.
+3. Inject `{{GITIGNORE-EXCLUSIONS}}` into the sandbox config, limiting write access to version-controlled files only.
+4. Replace general `{{PLACEHOLDERS}}` with answers from the general user interview questions.
 
 ### 3b — Central CLAUDE.md
 
@@ -152,6 +152,8 @@ If any of these steps seem inapplicable to the given sub-project, skip them and 
 
 - Present a summary table of everything created (file path, artifact type, purpose).
 - Explain that this is an initial scaffold, not a finished setup. Specifically:
+  - **Sandboxing needs testing** The sandbox config in the settings is untested. Call `/sandbox` to review.
+    If you are executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
   - **Explorer agents need tuning.** The generated agents contain only minimal structural knowledge.
     Developers should refine known directories and output format until they reliably return useful context.
   - **Use of core skills should be weighed up against use of rules.** This workflow generates core skills

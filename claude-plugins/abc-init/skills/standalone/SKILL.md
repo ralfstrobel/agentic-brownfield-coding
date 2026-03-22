@@ -69,7 +69,7 @@ Offer pre-defined choice options if likely answers to a question are already kno
 
 1. Copy the [template](./templates/settings-template.json) to `<project-dir>/.claude/settings.json`
 2. Replace `{{PLACEHOLDERS}}` with answers from the user interview.
-3. Add additional `Bash` permissions for known linter or testing tool commands.
+3. Inject `{{GITIGNORE-EXCLUSIONS}}` into the sandbox config, limiting write access to version-controlled files only.
 
 ### 3b — Central CLAUDE.md
 
@@ -119,6 +119,8 @@ If any of these steps seem inapplicable to the given project, skip them and note
 
 - Present a summary table of everything created (file path, artifact type, purpose).
 - Explain that this is an initial scaffold, not a finished setup. Specifically:
+  - **Sandboxing needs testing** The sandbox config in the settings is untested. Call `/sandbox` to review.
+    If you are executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
   - **The explorer agent needs tuning.** The generated agent contains only minimal structural knowledge.
     Developers should refine known directories and output format until it reliably returns useful context.
   - **Rules are stubs.** The generated rules contain minimal conventions.
