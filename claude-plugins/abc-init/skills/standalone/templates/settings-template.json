@@ -1,7 +1,25 @@
 {
     "$schema": "https://json.schemastore.org/claude-code-settings.json",
+    "companyAnnouncements": ["Welcome to Claude Code development for {{PROJECT-NAME}}!"],
+    "autoUpdatesChannel": "stable",
     "model": "sonnet",
     "effortLevel": "medium",
+    "includeCoAuthoredBy": false,
+    "autoMemoryEnabled": false,
+    "showClearContextOnPlanAccept": true,
+    "disableBypassPermissionsMode": "disable",
+    "enableAllProjectMcpServers": true,
+    "env": {
+        "DISABLE_TELEMETRY": "1",
+        "DISABLE_ERROR_REPORTING": "1",
+        "DISABLE_FEEDBACK_COMMAND": "1",
+        "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+        "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75"
+    },
+    "statusLine": {
+        "type": "command",
+        "command": "jq -r '\"[\\(.model.display_name)] \\(.context_window.used_percentage // 0)% context\"'"
+    },
     "permissions": {
         "allow": [
             "Edit({{SOURCE-PATH}}/**)"
@@ -9,6 +27,7 @@
     },
     "sandbox": {
         "enabled": true,
+        "failIfUnavailable": true,
         "autoAllowBashIfSandboxed": true,
         "allowUnsandboxedCommands": false,
         "filesystem": {
@@ -17,9 +36,5 @@
                 "{{GITIGNORE-EXCLUSIONS}}"
             ]
         }
-    },
-    "disableBypassPermissionsMode": "disable",
-    "includeCoAuthoredBy": false,
-    "autoMemoryEnabled": false,
-    "companyAnnouncements": ["Welcome to Claude Code development for {{PROJECT-NAME}}!"]
+    }
 }

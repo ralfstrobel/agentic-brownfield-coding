@@ -6,7 +6,7 @@ disable-model-invocation: true
 user-invocable: true
 ---
 
-# Claude Code Monorepo Initialization
+# Claude Code Monorepo Scaffolding
 
 Your goal is to create an initial setup for Claude Code in a large pre-existing monorepo project,
 including agent instructions and context information. You work in close collaboration with the user
@@ -17,31 +17,32 @@ to obtain the required base knowledge about the goals and structure of the proje
 **Language hint**: Always create all generated document content in English,
 while continuing to speak to the user in the language of their choice.
 
-## Philosophy
+## Agent Content Principles
 
-Brownfield projects depend on large amounts of implicit tribal knowledge that cannot be inferred by scanning the code.
-The main challenge is to codify this knowledge efficiently, so it is disclosed to the agent only exactly when needed.
+When generating content for `.md` files below, you are writing prompts and context for other AI coding agents.
+Follow these principles to optimally tailor your instructions to their needs:
 
-- **Minimal central CLAUDE.md** — This file is injected into every conversation and subagent.
-  Bloating it causes priority saturation: irrelevant instructions compete for attention and degrade output quality.
-  Use it only as a brief router (project identity, sub-project index, pointers to tooling).
-  Never put detailed conventions, workflows, or sub-project specifics here.
-- **Path-specific context over monolithic instructions** — Knowledge requirements in codebases align
-  with the filesystem hierarchy. Create per-sub-project skills, rules, and explorer agents so that
-  domain-specific context is only loaded when the agent is actually working in that area.
-- **Explorer agents as context primers** — LLMs need task-relevant code excerpts on demand.
-  Explorer agents solve this by navigating the codebase and returning contextualized findings,
-  replacing the need for exhaustive documentation in agent instructions.
-- **Code as single source of truth** — Prefer pointers to entry points over exhaustive documentation.
-  Duplicating code knowledge in agent instructions leads to drift. Let the agent read the code.
-- **No vague guardrails in generated content** — Do not generate aspirational quality statements,
-  abstract engineering principles, or blanket prohibition lists. Only generate concrete, actionable instructions.
+- **Concise**     — Minimize token usage. Prefer keywords and terse bullet points over prose.
+- **Structured**  — Use compact Markdown to delineate connected aspects.
+- **Actionable**  — Generate concrete operational directives, not abstract guidelines.
+                    Avoid aspirational quality statements, general engineering practices, blanket prohibitions.
+- **Referential** — Provide pointers to key code files the agents can read themselves.
+                    Do not describe how code works in agent instructions as such duplication leads to drift.
+- **Scoped**      — Context is hierarchical. The central CLAUDE.md applies to every scope and must only
+                    contain core project identity and semantics. Sub-project CLAUDE.md, rules and agent instructions
+                    progressively disclose domain- and task-specific knowledge.
 
 # Workflow
 
+1. Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool.
+   Create a task for each of the following phases (##) and sub-phases (###).
+   Do not duplicate the contents in the description, only reference this skill (`abc-init:monorepo`) and the workflow item.
+2. Create a dependency chain between all tasks using `TaskUpdate`, setting `addBlockedBy` to the predecessor task.
+3. Work through the `TaskList` using `TaskUpdate` to mark tasks as in_progress and completed as you go.
+
 ## Phase 1: Reconnaissance
 
-1. Use the Explore agent to scan the repository and build an initial understanding of its structure
+1. Use the `Explore` agent to scan the repository and build an initial understanding of its structure
    - Top-level directory content that hints at used technologies (e.g. `package.json`, `composer.json`, `Cargo.toml`, `go.mod`, `Makefile`, `Dockerfile`)
    - Existing documentation (e.g. `README.md`, `CONTRIBUTING.md` or `docs/`)
 2. Read any discovered documentation and technology manifest files 
@@ -72,9 +73,13 @@ Go through **every** sub-project established in general question 6 and repeat th
 2. What are the main purposes / functions of the sub-project?
 3. What are key terms or vocabulary that every developer in this sub-project needs to know?
 4. What are the main technologies used (programming language, framework, deployment...)?
-5. What are the key source directories?
-6. How are automated tests organized and run?
-7. Are there tools for linting or other automated code quality control?
+5. Does this sub-project live under a **dedicated root directory**?
+   - If **yes**: what is the path to that directory relative to the project root?
+   - If **no**: what file/path glob pattern uniquely identifies its source files? (e.g. `src/Payments/**/*.ts`)
+     This is typically `<namespace-path>/**/*.<language-extension>`.
+6. What are the key source directories?
+7. How are automated tests organized and run?
+8. Are there tools for linting or other automated code quality control?
 
 ## Phase 3: Generate Artifacts
 
@@ -113,32 +118,26 @@ Perform these steps for **every** established sub-project:
    and add additional context information and instructions that are helpful to navigate the code structure
    as well as common conventions and nomenclature.
 
-### 3e — Sub-Project Core Skills
+### 3e — Sub-Project Context Rules
 
-Perform these steps for **every** established sub-project:
+Perform these steps for **every** established sub-project.
+The approach differs depending on whether the sub-project has a dedicated root directory (interview question 5).
+If any of the steps seem inapplicable to the given sub-project, skip them and note this during the summary.
 
-1. Copy the [template](./templates/sub-project-development.md) to `<project-dir>/.claude/skills/<sub-project-slug>-development/SKILL.md`
-2. Fill in the `{{PLACEHOLDERS}}` with known answers from the respective sub-project interview questions.
-3. For placeholders that do not have corresponding answers,
-   ask the user whether they want to provide an answer, generate an answer from code exploration or omit the section.
-4. Ask the user whether they would like to add stubs for supplementary instruction files to the skill
-   such as a style guide or detailed testing workflow instructions, that the agent can load on demand.
-   If created, these files must be referenced in the main skill file via a Markdown link,
-   with an explicit instruction to the agent explaining when to read the file.
-
-### 3f — Sub-Project Context Stubs
-
-Perform these steps for **every** established sub-project that lives in a distinct sub-project directory:
+#### Case A: Sub-project with a dedicated root directory
 
 1. Copy the [template](./templates/sub-project-CLAUDE-template.md) to `<sub-project-path>/CLAUDE.md`
 2. Fill in the `{{PLACEHOLDERS}}` with known answers from the respective sub-project interview questions.
-3. Create a `.claude/rules/` directory inside the sub-project root.
-4. For each programming language used in the sub-project, create a code style rule
+3. For placeholders that do not have corresponding answers,
+   ask the user whether they want to provide an answer, generate an answer from code exploration or omit the section.
+4. Create a `.claude/rules/` directory inside the sub-project root.
+5. For each programming language used in the sub-project, create a code style rule
    from the [template](./templates/rule-code-style.md) at `<sub-project-path>/.claude/rules/<language>-code-style.md`
+    - The `paths` glob in the template uses `**/*.<ext>` — this is relative to the sub-project directory and is correct as-is.
     - Fill in `{{PLACEHOLDERS}}` according to the aspects of the programming language.
     - Populate the style rules from linting tool configuration if discovered in Phase 1,
       or from conventions observed during code exploration.
-5. For each testing framework used in the sub-project, create a testing rule
+6. For each testing framework used in the sub-project, create a testing rule
    from the [template](./templates/rule-testing.md)
    at `<sub-project-path>/.claude/rules/testing.md`
     - Determine a glob pattern matching only existing test files (e.g. `**/*.test.ts`, `**/*Test.php`, `**/test_*.py`, `**/*_test.go`).
@@ -146,23 +145,40 @@ Perform these steps for **every** established sub-project that lives in a distin
     - Populate with concrete test conventions (file placement, naming, assertion style, setup patterns)
       discovered in Phase 1 or the interview answers about test organization.
 
-If any of these steps seem inapplicable to the given sub-project, skip them and note this during the summary.
+#### Case B: Sub-project without a dedicated root directory
 
-## Phase 4: Review & Disclaimers
+Use this approach when sub-project files are spread across shared directories and are identified only by a path glob pattern.
+All rules go under the **project root** `.claude/rules/<sub-project-slug>/` so their `paths` globs can reference the full path from root.
+
+1. Copy the [template](./templates/sub-project-rule-template.md) to `<project-root>/.claude/rules/<sub-project-slug>/<sub-project-slug>-development.md`
+2. Set the `paths` frontmatter to the glob pattern established in interview question 5.
+3. Fill in the `{{PLACEHOLDERS}}` with known answers from the respective sub-project interview questions.
+4. For placeholders that do not have corresponding answers,
+   ask the user whether they want to provide an answer, generate an answer from code exploration or omit the section.
+5. For each programming language used in the sub-project, create a code style rule
+   from the [template](./templates/rule-code-style.md) at `<project-root>/.claude/rules/<sub-project-slug>/<language>-code-style.md`
+    - Set the `paths` glob to the same pattern as in step 2 (or a narrowed variant, e.g. excluding test directories).
+    - Fill in `{{PLACEHOLDERS}}` according to the aspects of the programming language.
+    - Populate the style rules from linting tool configuration or observed conventions.
+6. For each testing framework used in the sub-project, create a testing rule
+   from the [template](./templates/rule-testing.md) at `<project-root>/.claude/rules/<sub-project-slug>/testing.md`
+    - Set the `paths` glob to match only test files within the sub-project pattern.
+    - Populate with concrete test conventions discovered in Phase 1 or interview answers.
+
+## Phase 4: Debriefing & Disclaimers
 
 - Present a summary table of everything created (file path, artifact type, purpose).
-- Explain that this is an initial scaffold, not a finished setup. Specifically:
-  - **Sandboxing needs testing** The sandbox config in the settings is untested. Call `/sandbox` to review.
-    If you are executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
-  - **Explorer agents need tuning.** The generated agents contain only minimal structural knowledge.
+- Explain that this was a long agentic workflow and that agents can be prone to skipping steps.
+  So the user should carefully test everything that was created and compare it against this skill document.
+- Explain that this is an initial scaffold, not a turnkey setup. Specifically:
+  - **Sandboxing:** The sandbox config in the settings is untested. Call `/sandbox` to review.
+    If the user is executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
+  - **Explorer Agents:** The generated agents contain only minimal structural knowledge.
     Developers should refine known directories and output format until they reliably return useful context.
-  - **Use of core skills should be weighed up against use of rules.** This workflow generates core skills
-    because they allow the agent to load in domain knowledge about sub-projects on demand prior to file access.
-    This can be beneficial for architectural planning or answering general questions.
-    But if mandatory context injection for strict guidelines is needed, a `.claude/rules` file is more reliable.
-    So developers should consider which mechanism is best suited to place which context information.
+  - **Rules:** The generated rules contain minimal conventions.
+      Developers should expand them with the implicit conventions of this project over time.
 - Promote the `/abc:build` workflow example command, by explaining that agent context files alone
   are not a guarantee for reliable agent behavior and are unsuitable as enforceable constraints.
   They should be paired with concrete workflow protocol commands with explicit steps.
 - Promote the `/abc:learn` workflow command, that can be used to generate
-  additional agent context to manifest implicit tribal knowledge.
+  additional agent context rules to manifest implicit tribal knowledge.

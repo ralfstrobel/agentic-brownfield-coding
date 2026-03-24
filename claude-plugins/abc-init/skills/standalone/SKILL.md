@@ -6,7 +6,7 @@ disable-model-invocation: true
 user-invocable: true
 ---
 
-# Claude Code Standalone Project Initialization
+# Claude Code Standalone Project Scaffolding
 
 Your goal is to create an initial setup for Claude Code in a pre-existing standalone project,
 including agent instructions and context information. You work in close collaboration with the user
@@ -17,29 +17,31 @@ to obtain the required base knowledge about the goals and structure of the proje
 **Language hint**: Always create all generated document content in English,
 while continuing to speak to the user in the language of their choice.
 
-## Philosophy
+## Agent Content Principles
 
-Brownfield projects depend on large amounts of implicit tribal knowledge that cannot be inferred by scanning the code.
-The main challenge is to codify this knowledge efficiently, so it is disclosed to the agent only exactly when needed.
+When generating content for `.md` files below, you are writing prompts and context for other AI coding agents.
+Follow these principles to optimally tailor your instructions to their needs:
 
-- **Concise central CLAUDE.md** — This file is injected into every conversation and subagent.
-  Bloating it causes priority saturation: irrelevant instructions compete for attention and degrade output quality.
-  Include project identity, key vocabulary, technology overview, and pointers to tooling.
-- **Rules for scoped conventions** — Rules are deterministically injected when the agent reads matching files.
-  Use them for language-specific code and testing conventions rather than putting these in CLAUDE.md.
-- **Explorer agent as context primer** — LLMs need task-relevant code excerpts on demand.
-  A custom explorer agent navigates the codebase and returns contextualized findings,
-  replacing the need for exhaustive documentation in agent instructions.
-- **Code as single source of truth** — Prefer pointers to entry points over exhaustive documentation.
-  Duplicating code knowledge in agent instructions leads to drift. Let the agent read the code.
-- **No vague guardrails in generated content** — Do not generate aspirational quality statements,
-  abstract engineering principles, or blanket prohibition lists. Only generate concrete, actionable instructions.
+- **Concise**     — Minimize token usage. Prefer keywords and terse bullet points over prose.
+- **Structured**  — Use compact Markdown to delineate connected aspects.
+- **Actionable**  — Generate concrete operational directives, not abstract guidelines.
+                    Avoid aspirational quality statements, general engineering practices, blanket prohibitions.
+- **Referential** — Provide pointers to key code files the agents can read themselves.
+                    Do not describe how code works in agent instructions as such duplication leads to drift.
+- **Scoped**      — Context is hierarchical. The CLAUDE.md must only contain core project identity and semantics.
+                    Rules and agent instructions progressively disclose domain- and task-specific knowledge.
 
 # Workflow
 
+1. Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool.
+   Create a task for each of the following phases (##) and sub-phases (###).
+   Do not duplicate the contents in the description, only reference this skill (`abc-init:standalone`) and the workflow item.
+2. Create a dependency chain between all tasks using `TaskUpdate`, setting `addBlockedBy` to the predecessor task.
+3. Work through the `TaskList` using `TaskUpdate` to mark tasks as in_progress and completed as you go.
+
 ## Phase 1: Reconnaissance
 
-1. Use the Explore agent to scan the repository and build an initial understanding of its structure
+1. Use the `Explore` agent to scan the repository and build an initial understanding of its structure
    - Top-level directory content that hints at used technologies (e.g. `package.json`, `composer.json`, `Cargo.toml`, `go.mod`, `Makefile`, `Dockerfile`)
    - Existing documentation (e.g. `README.md`, `CONTRIBUTING.md` or `docs/`)
 2. Read any discovered documentation and technology manifest files
@@ -115,21 +117,20 @@ If a `.gitignore` file exists in the project root, append the following entries 
 
 If any of these steps seem inapplicable to the given project, skip them and note this during the summary.
 
-## Phase 4: Review & Disclaimers
+## Phase 4: Debriefing & Disclaimers
 
 - Present a summary table of everything created (file path, artifact type, purpose).
-- Explain that this is an initial scaffold, not a finished setup. Specifically:
-  - **Sandboxing needs testing** The sandbox config in the settings is untested. Call `/sandbox` to review.
-    If you are executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
-  - **The explorer agent needs tuning.** The generated agent contains only minimal structural knowledge.
+- Explain that this was a long agentic workflow and that agents can be prone to skipping steps.
+  So the user should carefully test everything that was created and compare it against this skill document.
+- Explain that this is an initial scaffold, not a turnkey setup. Specifically:
+  - **Sandboxing:** The sandbox config in the settings is untested. Call `/sandbox` to review.
+    If the user is executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
+  - **Explorer Agents:** The generated agent contains only minimal structural knowledge.
     Developers should refine known directories and output format until it reliably returns useful context.
-  - **Rules are stubs.** The generated rules contain minimal conventions.
+  - **Rules:** The generated rules contain minimal conventions.
     Developers should expand them with the implicit conventions of this project over time.
-  - **CLAUDE.md files can be created in any directory.** If rules seem too much overhead,
-    the simplest way to inject path-based context is to create a CLAUDE.md in a directory,
-    and it will be loaded whenever the agent first accesses this part of the code.
 - Promote the `/abc:build` workflow example command, by explaining that agent context files alone
   are not a guarantee for reliable agent behavior and are unsuitable as enforceable constraints.
   They should be paired with concrete workflow protocol commands with explicit steps.
 - Promote the `/abc:learn` workflow command, that can be used to generate
-  additional agent context to manifest implicit tribal knowledge.
+  additional agent context rules to manifest implicit tribal knowledge.

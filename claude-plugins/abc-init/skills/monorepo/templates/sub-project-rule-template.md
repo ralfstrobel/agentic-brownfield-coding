@@ -1,12 +1,11 @@
 ---
-description: CORE skill for {{SUB-PROJECT-PROGRAMMING-LANGUAGE}} {{SUB-PROJECT-NAME}} development - must be invoked whenever {{SUB-PROJECT-NAME}} code is read or modified!
-user-invocable: false
+paths: "{{SUB-PROJECT-PATH-GLOB}}"
 ---
 
 # {{SUB-PROJECT-NAME}} Development
 
 ## Technologies
-{{SUB-PROJECT-TECHNOLOGIES-DETAILED}}
+{{SUB-PROJECT-TECHNOLOGIES-IN-DETAIL}}
 
 ## Key Concepts and Vocabulary
 {{SUB-PROJECT-VOCABULARY}}

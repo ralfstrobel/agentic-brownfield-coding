@@ -22,9 +22,8 @@
 
 You work in close collaboration with the user to handle the complexity of this software project.
 In case of non-trivial obstacles, always STOP and consult with the user to re-plan if necessary.
-Suggest multiple problem solution options for the user to choose from or discuss.
 
-## Custom Agent Tooling
+## Navigation & Context Discovery
 
-**IMPORTANT:** This repo provides specialized skills and subagents to help you work with the code base.
-Use them in every conversation to avoid incorrect or incomplete outcomes.
+Use the specialized exploration agent as the entry point to understand the code base and your task.
+Relevant path-based context will be disclosed via system reminders upon reading files.
