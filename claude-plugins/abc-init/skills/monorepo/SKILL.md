@@ -165,6 +165,63 @@ All rules go under the **project root** `.claude/rules/<sub-project-slug>/` so t
     - Set the `paths` glob to match only test files within the sub-project pattern.
     - Populate with concrete test conventions discovered in Phase 1 or interview answers.
 
+### 3f — Post-Edit Hook
+
+This is a single project-wide hook (not per sub-project). The created script delegates internally.
+
+1. Copy the [template](./templates/post-edit-hook.sh) to `<project-dir>/.claude/hooks/post-edit.sh`
+2. Make it executable (`chmod +x`).
+3. Replace the `{{FILE-TYPE-CASES}}` placeholder with concrete dispatching logic
+   using the linting tools (Q8) and test frameworks (Q7) from **all** sub-project interviews.
+   Follow the pattern from the commented example in the template:
+    - Match test files first (most specific glob), run formatter/linter + execute the test directly.
+    - Match source files, run formatter/linter + derive and run the associated test file.
+    - Fall through to `exit 0` for unrecognized file types.
+    - For monorepos, the file type cases typically need to distinguish sub-projects by path prefix
+      before dispatching to the appropriate tools (e.g. `services/backend/*.py` vs `web/*.ts`).
+    - If test file discovery requires mapping source paths to test paths,
+      derive the convention from directory structure observed during Phase 1.
+
+If the project's quality tooling is unclear or not yet set up for some sub-projects,
+leave those cases out and include only the sub-projects with known tooling.
+The project owner can extend the hook later.
+
+### 3g — Explorer Redirect Hook
+
+This is a single project-wide hook (not per sub-project). The created script is agnostic to project scope.
+
+1. Copy the [template](./templates/explorer-redirect-hook.sh) to `<project-dir>/.claude/hooks/explorer-redirect.sh`
+2. Make it executable (`chmod +x`).
+3. Replace `{{SOURCE-PATH-REGEX}}` with a bash regex matching **all** sub-project root directories
+   or source path prefixes established during the interview (Q5/Q6).
+
+### 3h — CLI MCP Server (Optional)
+
+1. Ask the user whether they would like to skip this step (3h). It scaffolds a lightweight MCP tool server
+   that makes project CLI tools available to the agent (docker services, build systems, database tools).
+   This may not be useful for projects that rely primarily on local shell commands and web APIs.
+2. Copy the [template](./templates/project-cli-mcp.sh) to `<project-dir>/.claude/mcp/<project-slug>-cli.sh`
+3. Make it executable (`chmod +x`).
+4. Replace `{{PROJECT-SLUG}}` with the project slug.
+5. Adjust the `run_cmd` wrapper to match the project's execution environment
+   (direct execution, Docker Compose, Makefile, etc.).
+6. Replace `{{TOOL-DEFINITIONS}}` with JSON tool entries for the project's CLI tools.
+   For monorepos, consider tools that span sub-projects (e.g. a shared build system or CI runner)
+   as well as sub-project-specific tools (e.g. per-service test runners).
+   Use the commented example in the template as a guide.
+7. Replace `{{TOOL-HANDLERS}}` with matching case branches that invoke the actual CLI commands.
+8. Create a `.mcp.json` file at the project root (if it does not already exist) registering the server:
+   ```json
+   {
+     "mcpServers": {
+       "<project-slug>-cli": {
+         "type": "stdio",
+         "command": ".claude/mcp/<project-slug>-cli.sh"
+       }
+     }
+   }
+   ```
+
 ## Phase 4: Debriefing & Disclaimers
 
 - Present a summary table of everything created (file path, artifact type, purpose).
@@ -175,10 +232,19 @@ All rules go under the **project root** `.claude/rules/<sub-project-slug>/` so t
     If the user is executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
   - **Explorer Agents:** The generated agents contain only minimal structural knowledge.
     Developers should refine known directories and output format until they reliably return useful context.
+  - **Post-Edit Hook:** The generated hook may contain incorrect commands
+    or test file discovery logic. Run a few manual edits and verify that linter and tests provide correct feedback.
+    If the hook was left as a stub, implement the script logic for each sub-project's quality tooling.
+  - **Explorer Redirect Hook:** It tries to detect sub-project directories where direct search
+    should be blocked in favor of explorer agents. This may be too restrictive or permissive depending on repo structure.
+  - **MCP Server:** If created, it likely only wraps a few CLI tools.
+    Developers should extend it with additional tools as they discover which commands
+    the agent should be able to invoke frequently.
   - **Rules:** The generated rules contain minimal conventions.
       Developers should expand them with the implicit conventions of this project over time.
 - Promote the `/abc:build` workflow example command, by explaining that agent context files alone
   are not a guarantee for reliable agent behavior and are unsuitable as enforceable constraints.
-  They should be paired with concrete workflow protocol commands with explicit steps.
+  They should be paired with concrete workflow protocol commands with explicit steps
+  and deterministic hooks that enforce quality gates automatically.
 - Promote the `/abc:learn` workflow command, that can be used to generate
   additional agent context rules to manifest implicit tribal knowledge.

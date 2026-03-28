@@ -33,7 +33,8 @@ Loading irrelevant sections leads not only to wasted compute resources
 but also worse outcomes [due to a noisier context window](https://arxiv.org/abs/2510.05381).
 
 Claude Code comes with a built-in solution in the form of the general-purpose "[Explore](https://code.claude.com/docs/en/sub-agents#built-in-subagents)" subagent,
-which can navigate the filesystem, read files, and search for patterns on behalf of the primary agent.
+which can navigate the filesystem, read files, and search for patterns on behalf of the primary agent,
+[without polluting the parent context](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/ace-fca.md#back-to-compaction-using-sub-agents).
 Developers can lean into this concept by defining custom explorer agents tailored to the structure of their codebase.
 This way the agent already knows which directories to look in, how to interpret naming conventions,
 and which structural aspects of a component are most relevant to return.
@@ -130,11 +131,11 @@ In fact, a growing volume of abstract rules contributes once again to priority s
 potentially drowning out the specific, actionable instructions that could positively influence outcomes.
 
 From a technical perspective it should also be noted that adding concrete behavioral modifiers to CLAUDE.md
-will often be unsuccessful. The reason is that its content is [specifically prefaced](https://www.humanlayer.dev/blog/writing-a-good-claude-md)
+will often be unsuccessful. The reason is that its content is [specifically prefaced](https://www.humanlayer.dev/blog/writing-a-good-claude-md#:~:text=Claude%20often%20ignores%20CLAUDE.md)
 to the model in a way that declares it as contextual information, not instructions,
 so that it does not interfere with the actual user prompt.
 
-### Alternative: Workflows With Explicit Steps
+### Alternative 1: Workflows With Explicit Steps
 
 A proven way to produce reliable and verifiable results even from LLMs is explicit procedural instruction.
 Current models have become highly capable at following concrete, step-by-step protocols in the user prompt text.
@@ -151,7 +152,51 @@ switching between different LLM models of equal quality and can be backtested on
 
 This shift in strategy reflects a necessary general change in how agentic systems are understood.
 The approachable natural-language interface invites the expectation that an agent can be treated
-as a general problem solver that only requires an objecive and will autonomously find its way to a good solution.
+as a general problem solver that only requires an objective and will autonomously find its way to a good solution.
 In practice, these systems are best used as highly sophisticated workflow automation.
 They excel at executing well-defined processes and making well-defined decisions with precision and speed,
 but they do not (yet) replace the need for a human to decompose problems, define approaches, and evaluate outcomes.
+
+### Alternative 2: Hooks With Deterministic Enforcement
+
+In order to execute complex workflows autonomously, agents need a source of feedback to determine
+whether a task was completed successfully. The simplest option is to bake such review and testing steps
+directly into the workflow, for instance by adding instructions on how to run code quality tools or tests.
+However, this naive approach has important drawbacks:
+1. While it is likely that the model will follow such instructions, it is not guaranteed.
+   Especially in iterative approaches that require repeated code change and test cycles,
+   the model may eventually forget to execute all necessary quality control steps.
+2. Repeated tool calls lead to unnecessary token use and context noise,
+   especially for passing test runs that do not contribute any relevant feedback.
+3. Any additional instructions added to a workflow reduce the attention budget of the model
+   and decrease the chance of overall correct execution.
+
+As a better alternative, Claude Code provides [hooks](https://code.claude.com/docs/en/hooks),
+which allow execution of conventional deterministic programming logic in reaction to certain agent behavior.
+Given the versatility of this approach, the following list can only highlight some common use cases:
+
+- The `PreToolUse` hook is commonly used to **restrict behavior** of agents
+  with finer granularity than allowed by the permission settings.
+  This includes blocking read access to secure or untrusted information
+  as well as preventing destructive write actions to critical assets.
+  It can also simply be used to **steer agents**, so they remain on track with a certain workflow
+  and avoid taking inefficient steps towards their goal.
+- The `PostToolUse` hook is the ideal point to provide **immediate feedback** to the model by
+  executing linters, static code analysis tools and automated tests.
+  However, it should be noted that the model may still choose to ignore the provided feedback.
+- The `Stop` hook can be used to implement stricter **quality gates**
+  like running more extensive test suites, invoking a secondary reviewer agent or alerting a human reviewer.
+  Based on the outcome, it can force the model back into action until all issues are resolved
+  or initiate **automated code submission** by making commits, creating pull requests or initiating deployment.
+- Alternatively, the `Stop` hook can also be used to load or generate **follow-up instructions**  
+  and keep the agent working autonomously through multi-phase or looping tasks.
+- The `UserPromptSubmit` and `InstructionsLoaded` hooks can provide another layer of targeted context disclosure
+  by loading or generating additional content for the model to ingest based on user prompt content or file access.
+
+Seamless integration between soft natural language instructions and hard programmatic execution is an overarching
+emergent theme in agentic software development. At first, most of this took place within the coding tool itself.
+By now, various add-on techniques such as hooks, path-based rules and MCP servers have opened up the discipline
+of [harness engineering](https://www.humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents)
+to every individual developer. For large code bases in particular, time and effort spent on an optimized custom harness
+has an extremely high return on investment in the long run. A good setup will not only improve quality of outcomes
+but also dramatically increase delivery speed and reduce token cost.

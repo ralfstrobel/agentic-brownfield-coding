@@ -117,6 +117,56 @@ If a `.gitignore` file exists in the project root, append the following entries 
 
 If any of these steps seem inapplicable to the given project, skip them and note this during the summary.
 
+### 3f — Post-Edit Hook
+
+1. Copy the [template](./templates/post-edit-hook.sh) to `<project-dir>/.claude/hooks/post-edit.sh`
+2. Make it executable (`chmod +x`).
+3. Replace the `{{FILE-TYPE-CASES}}` placeholder with concrete dispatching logic
+   using the linting tools (Q8) and test framework (Q7) established during the interview.
+   Follow the pattern from the commented example in the template:
+    - Match test files first (most specific glob), run formatter/linter + execute the test directly.
+    - Match source files, run formatter/linter + derive and run the associated test file.
+    - Fall through to `exit 0` for unrecognized file types.
+4. If test file discovery requires mapping source paths to test paths,
+   derive the convention from directory structure observed during Phase 1
+   (e.g. `src/Foo.ts` → `src/__tests__/Foo.test.ts`, or `src/Foo.php` → `tests/FooTest.php`).
+5. The settings template already references this hook path in its `hooks.PostToolUse` configuration.
+
+If the project's quality tooling is unclear or not yet set up, leave the `{{FILE-TYPE-CASES}}` placeholder
+as-is with only the commented example. The project owner can fill it in later.
+
+### 3g — Explorer Redirect Hook
+
+1. Copy the [template](./templates/explorer-redirect-hook.sh) to `<project-dir>/.claude/hooks/explorer-redirect.sh`
+2. Make it executable (`chmod +x`).
+3. Replace `{{SOURCE-PATH-REGEX}}` with a bash regex matching the key source directories (Q6).
+
+### 3h — CLI MCP Server (Optional)
+
+1. Ask the user whether they would like to skip this step (3h). It scaffolds a lightweight MCP tool server
+   that makes project CLI tools available to the agent (docker services, build systems, database tools).
+   This may not be useful for projects that rely primarily on local shell commands and web APIs.
+2. Copy the [template](./templates/project-cli-mcp.sh) to `<project-dir>/.claude/mcp/<project-slug>-cli.sh`
+3. Make it executable (`chmod +x`).
+4. Replace `{{PROJECT-SLUG}}` with the project slug.
+5. Adjust the `run_cmd` wrapper to match the project's execution environment
+   (direct execution, Docker Compose, Makefile, etc.).
+6. Replace `{{TOOL-DEFINITIONS}}` with JSON tool entries for the project's CLI tools.
+   At minimum, create a tool for the test runner (Q7) if one exists.
+   Use the commented example in the template as a guide.
+7. Replace `{{TOOL-HANDLERS}}` with matching case branches that invoke the actual CLI commands.
+8. Create a `.mcp.json` file at the project root (if it does not already exist) registering the server:
+   ```json
+   {
+     "mcpServers": {
+       "<project-slug>-cli": {
+         "type": "stdio",
+         "command": ".claude/mcp/<project-slug>-cli.sh"
+       }
+     }
+   }
+   ```
+
 ## Phase 4: Debriefing & Disclaimers
 
 - Present a summary table of everything created (file path, artifact type, purpose).
@@ -127,10 +177,19 @@ If any of these steps seem inapplicable to the given project, skip them and note
     If the user is executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
   - **Explorer Agents:** The generated agent contains only minimal structural knowledge.
     Developers should refine known directories and output format until it reliably returns useful context.
+  - **Post-Edit Hook:** The generated hook may contain incorrect commands
+    or test file discovery logic. Run a few manual edits and verify that linter and tests provide correct feedback.
+    If the hook was left as a stub, implement the script logic for the project's quality tooling.
+  - **Explorer Redirect Hook:** It tries to detect project directories where direct search
+    should be blocked in favor of explorer agents. This may be too restrictive or permissive depending on repo structure.
+  - **MCP Server:** If created, it likely only wraps a few CLI tools.
+    Developers should extend it with additional tools as they discover which commands
+    the agent should be able to invoke frequently.
   - **Rules:** The generated rules contain minimal conventions.
     Developers should expand them with the implicit conventions of this project over time.
 - Promote the `/abc:build` workflow example command, by explaining that agent context files alone
   are not a guarantee for reliable agent behavior and are unsuitable as enforceable constraints.
-  They should be paired with concrete workflow protocol commands with explicit steps.
+  They should be paired with concrete workflow protocol commands with explicit steps
+  and deterministic hooks that enforce quality gates automatically.
 - Promote the `/abc:learn` workflow command, that can be used to generate
   additional agent context rules to manifest implicit tribal knowledge.

@@ -36,5 +36,29 @@
                 "{{GITIGNORE-EXCLUSIONS}}"
             ]
         }
+    },
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Grep|Glob|Agent|Bash",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": ".claude/hooks/explorer-redirect.sh"
+                    }
+                ]
+            }
+        ],
+        "PostToolUse": [
+            {
+                "matcher": "Edit|Write",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": ".claude/hooks/post-edit.sh"
+                    }
+                ]
+            }
+        ]
     }
 }
