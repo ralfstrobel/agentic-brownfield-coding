@@ -168,8 +168,8 @@ However, this naive approach has important drawbacks:
    the model may eventually forget to execute all necessary quality control steps.
 2. Repeated tool calls lead to unnecessary token use and context noise,
    especially for passing test runs that do not contribute any relevant feedback.
-3. Any additional instructions added to a workflow reduce the attention budget of the model
-   and decrease the chance of overall correct execution.
+3. Any additional instructions added to a workflow reduce the [attention budget](https://arxiv.org/abs/2507.11538)
+   of the model and decrease the chance of overall correct execution.
 
 As a better alternative, Claude Code provides [hooks](https://code.claude.com/docs/en/hooks),
 which allow execution of conventional deterministic programming logic in reaction to certain agent behavior.
