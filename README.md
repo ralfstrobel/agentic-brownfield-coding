@@ -27,7 +27,7 @@ claude plugin install abc-init@agentic-brownfield-coding
 claude plugin install abc@agentic-brownfield-coding
 ```
 
-The separate init plugin is only required once for initialization and can be uninstalled after.
+The separate init plugin is only required once for scaffolding and can be uninstalled after.
 
 ## Usage
 
