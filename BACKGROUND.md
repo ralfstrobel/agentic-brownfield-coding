@@ -3,6 +3,23 @@
 This document details perceived pitfalls and antipatterns in the way agent instructions are integrated
 into (large) code repositories, as well as the alternatives and solutions proposed by the ABC project.
 
+## Contents
+
+1. [Documentation as Agent Instructions](#antipattern-documentation-as-agent-instructions)
+
+   → [Explorer Agents as Context Primers](#alternative-explorer-agents-as-context-primers)
+2. [Intransparent Automatic Memory](#antipattern-intransparent-automatic-memory)
+
+   → [Path-Specific Codified Context](#alternative-path-specific-codified-context)
+3. [CLAUDE.md With Vague Guardrails](#antipattern-claudemd-with-vague-guardrails)
+
+   → [Workflows With Explicit Steps](#alternative-1-workflows-with-explicit-steps)
+
+   → [Hooks With Deterministic Enforcement](#alternative-2-hooks-with-deterministic-enforcement)
+4. [Sandboxed Bash Tool](#antipattern-sandboxed-bash-tool)
+
+   → [Curated MCP Tools](#alternative-curated-mcp-tools)
+
 ## Antipattern: Documentation as Agent Instructions
 
 The reflexive approach taken by many developers when writing agent instructions is to structure them 
@@ -195,8 +212,64 @@ Given the versatility of this approach, the following list can only highlight so
 
 Seamless integration between soft natural language instructions and hard programmatic execution is an overarching
 emergent theme in agentic software development. At first, most of this took place within the coding tool itself.
-By now, various add-on techniques such as hooks, path-based rules and MCP servers have opened up the discipline
+By now, various add-on techniques such as hooks and path-based rules have opened up the discipline
 of [harness engineering](https://www.humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents)
 to every individual developer. For large code bases in particular, time and effort spent on an optimized custom harness
 has an extremely high return on investment in the long run. A good setup will not only improve quality of outcomes
 but also dramatically increase delivery speed and reduce token cost.
+
+## Antipattern: Sandboxed Bash Tool
+
+All currently popular coding agents allow the model to execute arbitrary shell commands via a `Bash` tool.
+This design choice solved the [tool flooding](https://www.jenova.ai/en/resources/mcp-tool-scalability-problem)
+problem of early agents and played directly to the strength of coding agents, which can now easily compose
+CLI expressions to perform complex tasks and solve problems autonomously.
+
+However, access to unstructured CLI tools also introduced several new problems:
+1. [Sandboxing](https://developer.nvidia.com/blog/practical-security-guidance-for-sandboxing-agentic-workflows-and-managing-execution-risk/)
+   became a mandatory requirement for safe development, as agents may execute commands that have unintended destructive effects
+   or expose sensitive information. Reasons for this include stochastic flukes, misunderstandings or even prompt injection.
+   Human oversight is not a viable mitigation strategy, as approval fatigue inevitably leads to negligence.
+2. [Tool selection bias](https://arxiv.org/abs/2510.00307) is the phenomenon that probabilistic models tend to gravitate
+   toward frequently used solutions and will prefer them even if there are specialized, more appropriate alternatives.
+   Bash is particularly attractive, due to its ubiquitous use in software development. Agents can be routinely observed
+   using commands like `Bash(grep)` for file system exploration rather than the optimized built-in `Grep` tool,
+   let alone MCP tools for indexed codebase intelligence.
+3. _Harness Bypassing_ is a more serious consequence that occurs when agents prefer or default to the use of `Bash`
+   unexpectedly, ignoring native tools for which the harness engineer has defined constraints:
+   - The `Read` tool serves as the trigger for path-based rules and enforces read access permissions,
+     but agents may simply opt to choose `Bash(cat)` instead.
+   - The `Edit` tool commonly serves as the trigger for post-edit hooks or may be entirely prohibited for read-only agents,
+     but models can bypass these restrictions easily by using `Bash(sed)`.
+
+This is why the trend is already shifting back towards structured primitive tools, though with a new twist of
+exposing these tools as composable building blocks inside a
+[controlled DSL](https://yortuc.com/posts/securing-shell-execution-agents/#the-fundamental-trade-off-shell-vs-structured-approaches),
+an [abstract execution layer](https://blog.cloudflare.com/code-mode/)
+or a [pseudo-shell with reduced features](https://github.com/vercel-labs/just-bash).
+
+### Alternative: Curated MCP Tools
+
+Fortunately, any specific software project only requires a limited set of specialized tools:
+the ability to read/write/search source code, commands for version control and automated testing, and optional API/DB access.
+In Claude Code, these tools can be easily provided via a [project-specific MCP server](https://code.claude.com/docs/en/mcp#project-scope)
+that exposes wrapped native shell commands via stdio.
+
+This gives the development team full control over each individual action an agent can take and how these actions
+are presented to the model. Defined tools once more become part of the version controlled configuration.
+Their output can be optimized for the model, audited for security issues and iterated upon.
+Even if the total number of tools should reach several dozen, this is far less of a problem than it used to be,
+thanks to the introduction of [tool search](https://www.anthropic.com/engineering/advanced-tool-use#tool-search-tool).
+
+Still, strictly curating the list of available tools is highly advisable to facilitate good tool choice by the agent.
+Many add-on MCP servers expose a large number of tools indiscriminately without internal ways to deactivate them.
+This can not only confuse the model but also introduce harness bypassing via alternative read/write tools.
+The workaround strategy is to suppress these tools directly within Claude Code, which is possible by adding them to the
+`permissions.deny` list in the settings. This not only rejects their execution but entirely
+[removes them from the list of tools](https://github.com/anthropics/claude-code/issues/7328#issuecomment-4042941478)
+presented to the model. Successful removal can be verified via the `/context` command.
+
+Tightly controlling the scope of available tools is another cornerstone for reliable and efficient agentic workflows.
+Granting agents direct native CLI control can remain a powerful strategy when the goal is for them
+to freely explore a controlled environment and develop solutions autonomously. But this approach should only be chosen
+when non-deterministic outcomes are not only acceptable but desired.

@@ -55,7 +55,7 @@ Interview the user to establish the project's base details and sub-project bound
 Use `AskUserQuestion` where appropriate to keep the conversation structured.
 Offer pre-defined choice options if likely answers to a question are already known from context.
 
-### General Question Catalogue 
+### General Question Catalogue
 
 1. What is the name of the project?
 2. Who is the project creator and/or maintainer (company/organization)?
@@ -117,6 +117,9 @@ Perform these steps for **every** established sub-project:
 3. Use a general purpose `Explore` agent to perform a more thorough exploration of the sub-project's code
    and add additional context information and instructions that are helpful to navigate the code structure
    as well as common conventions and nomenclature.
+
+After creation of all explorer agents, modify `.claude/settings.json`:
+- Add `"Agent(Explore)"` to the `permissions.deny` array (create it if it does not exist).
 
 ### 3e — Sub-Project Context Rules
 
@@ -186,42 +189,6 @@ If the project's quality tooling is unclear or not yet set up for some sub-proje
 leave those cases out and include only the sub-projects with known tooling.
 The project owner can extend the hook later.
 
-### 3g — Explorer Redirect Hook
-
-This is a single project-wide hook (not per sub-project). The created script is agnostic to project scope.
-
-1. Copy the [template](./templates/explorer-redirect-hook.sh) to `<project-dir>/.claude/hooks/explorer-redirect.sh`
-2. Make it executable (`chmod +x`).
-3. Replace `{{SOURCE-PATH-REGEX}}` with a bash regex matching **all** sub-project root directories
-   or source path prefixes established during the interview (Q5/Q6).
-
-### 3h — CLI MCP Server (Optional)
-
-1. Ask the user whether they would like to skip this step (3h). It scaffolds a lightweight MCP tool server
-   that makes project CLI tools available to the agent (docker services, build systems, database tools).
-   This may not be useful for projects that rely primarily on local shell commands and web APIs.
-2. Copy the [template](./templates/project-cli-mcp.sh) to `<project-dir>/.claude/mcp/<project-slug>-cli.sh`
-3. Make it executable (`chmod +x`).
-4. Replace `{{PROJECT-SLUG}}` with the project slug.
-5. Adjust the `run_cmd` wrapper to match the project's execution environment
-   (direct execution, Docker Compose, Makefile, etc.).
-6. Replace `{{TOOL-DEFINITIONS}}` with JSON tool entries for the project's CLI tools.
-   For monorepos, consider tools that span sub-projects (e.g. a shared build system or CI runner)
-   as well as sub-project-specific tools (e.g. per-service test runners).
-   Use the commented example in the template as a guide.
-7. Replace `{{TOOL-HANDLERS}}` with matching case branches that invoke the actual CLI commands.
-8. Create a `.mcp.json` file at the project root (if it does not already exist) registering the server:
-   ```json
-   {
-     "mcpServers": {
-       "<project-slug>-cli": {
-         "type": "stdio",
-         "command": ".claude/mcp/<project-slug>-cli.sh"
-       }
-     }
-   }
-   ```
-
 ## Phase 4: Debriefing & Disclaimers
 
 - Present a summary table of everything created (file path, artifact type, purpose).
@@ -235,13 +202,10 @@ This is a single project-wide hook (not per sub-project). The created script is 
   - **Post-Edit Hook:** The generated hook may contain incorrect commands
     or test file discovery logic. Run a few manual edits and verify that linter and tests provide correct feedback.
     If the hook was left as a stub, implement the script logic for each sub-project's quality tooling.
-  - **Explorer Redirect Hook:** It tries to detect sub-project directories where direct search
-    should be blocked in favor of explorer agents. This may be too restrictive or permissive depending on repo structure.
-  - **MCP Server:** If created, it likely only wraps a few CLI tools.
-    Developers should extend it with additional tools as they discover which commands
-    the agent should be able to invoke frequently.
   - **Rules:** The generated rules contain minimal conventions.
       Developers should expand them with the implicit conventions of this project over time.
+- Promote the `/abc-init:bashless` skill, which can replace the `Bash` tool with structured MCP tools
+  to prevent the agent from being attracted to unstructured shell access.
 - Promote the `/abc:build` workflow example command, by explaining that agent context files alone
   are not a guarantee for reliable agent behavior and are unsuitable as enforceable constraints.
   They should be paired with concrete workflow protocol commands with explicit steps

@@ -38,6 +38,9 @@ These commands should be run using Opus as they require complex code base reason
 - [`/abc-init:standalone`](claude-plugins/abc-init/skills/standalone/SKILL.md) – Create initial Claude Code artifacts for single-application projects.
 - [`/abc-init:monorepo`](claude-plugins/abc-init/skills/monorepo/SKILL.md) – Create initial Claude Code artifacts for monorepo-like projects.
 
+- [`/abc-init:bashless`](claude-plugins/abc-init/skills/bashless/SKILL.md) – (Optional) Create MCP tool wrappers for relevant CLI commands
+  and disable the `Bash` tool to prevent the agent from being attracted to inefficient shell access (particularly when indexed code search is available).
+
 As even frontier models sometimes struggle to follow long workflows,
 you may want to read the skill yourself and compare it against your output.
 Also note that the result is not a turnkey solution and requires thorough testing for every new code base.

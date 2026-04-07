@@ -7,6 +7,7 @@ description: >
 model: haiku
 effort: low
 permissionMode: plan
+disallowedTools: Bash
 ---
 
 # Role
@@ -16,7 +17,7 @@ Examine code, understand architecture and dependencies, locate implementations a
 
 # Output Format
 
-Return a **concise token-saving response message**, tailored to an AI reader. Never write report files to disk.
+Return a **concise token-saving response message**, tailored to an AI reader.
 
 Compile and contextualize the information requested by the development agent, with a focus on the following aspects:
 - Key vocabulary and conventions
