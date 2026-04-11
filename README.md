@@ -39,7 +39,7 @@ These commands should be run using Opus as they require complex code base reason
 - [`/abc-init:monorepo`](claude-plugins/abc-init/skills/monorepo/SKILL.md) – Create initial Claude Code artifacts for monorepo-like projects.
 
 - [`/abc-init:bashless`](claude-plugins/abc-init/skills/bashless/SKILL.md) – (Optional) Create MCP tool wrappers for relevant CLI commands
-  and disable the `Bash` tool to prevent the agent from being attracted to inefficient shell access (particularly when indexed code search is available).
+  and disable the `Bash` tool, in order to prevent inefficient tool choice and harness bypassing via shell.
 
 As even frontier models sometimes struggle to follow long workflows,
 you may want to read the skill yourself and compare it against your output.
@@ -68,7 +68,7 @@ the focus will likely remain on Claude Code due to time constraints.
 
 ## Shoutouts and Related Projects
 
-- The official Anthropic Claude Code plugins include a powerful toolkit for [skill creation](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator) that also works for workflow commands.
+- The official Claude Code plugins include a toolkit for [skill creation](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator), also suitable for workflow commands.
 - [superpowers](https://github.com/obra/superpowers) is a well-known plugin for enhanced workflows.
 - [GET SHIT DONE](https://github.com/gsd-build/get-shit-done) is a light-weight spec-driven approach for iterative development.
 - [BMAD-ENHANCED](https://github.com/adolfoaranaes12/BMAD-ENHANCED/tree/main/.claude/skills) provides various skills to analyze existing architecture and develop specs.
