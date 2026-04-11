@@ -85,10 +85,11 @@ Go through **every** sub-project established in general question 6 and repeat th
 
 ### 3a — Claude Code Settings
 
-1. Copy the [template](./templates/settings-template.json) to `<project-dir>/.claude/settings.json`
-2. Duplicate the permissions with the `{{SUB-PROJECT-PATH}}` placeholder for each sub-project.
-3. Inject `{{GITIGNORE-EXCLUSIONS}}` into the sandbox config, limiting write access to version-controlled files only.
-4. Replace general `{{PLACEHOLDERS}}` with answers from the general user interview questions.
+1. Copy the [settings template](./templates/settings-template.json) to `<project-dir>/.claude/settings.json`
+2. Copy the [statusline template](./templates/statusline.sh) to `<project-dir>/.claude/statusline.sh` and make it executable (`chmod +x`).
+3. Duplicate the permissions with the `{{SUB-PROJECT-PATH}}` placeholder for each sub-project.
+4. Inject `{{GITIGNORE-EXCLUSIONS}}` into the sandbox config, limiting write access to version-controlled files only.
+5. Replace general `{{PLACEHOLDERS}}` with answers from the general user interview questions.
 
 ### 3b — Central CLAUDE.md
 

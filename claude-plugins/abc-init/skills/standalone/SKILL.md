@@ -69,9 +69,10 @@ Offer pre-defined choice options if likely answers to a question are already kno
 
 ### 3a — Claude Code Settings
 
-1. Copy the [template](./templates/settings-template.json) to `<project-dir>/.claude/settings.json`
-2. Replace `{{PLACEHOLDERS}}` with answers from the user interview.
-3. Inject `{{GITIGNORE-EXCLUSIONS}}` into the sandbox config, limiting write access to version-controlled files only.
+1. Copy the [settings template](./templates/settings-template.json) to `<project-dir>/.claude/settings.json`
+2. Copy the [statusline template](./templates/statusline.sh) to `<project-dir>/.claude/statusline.sh` and make it executable (`chmod +x`).
+3. Replace `{{PLACEHOLDERS}}` with answers from the user interview.
+4. Inject `{{GITIGNORE-EXCLUSIONS}}` into the sandbox config, limiting write access to version-controlled files only.
 
 ### 3b — Central CLAUDE.md
 
