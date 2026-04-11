@@ -1,6 +1,10 @@
 ---
 description: Codify implicit codebase knowledge as agent rules.
 argument-hint: [fact, concept or topic]
+metadata:
+  hint: >
+    This command is best executed mid-conversation to capture missing implicit knowledge contextually.
+    Use "/rewind" to restore the previous conversation state after completion to keep your agent context window clean.
 ---
 
 # Codify Implicit Knowledge
@@ -59,10 +63,11 @@ paths: "src/**/*.php"
 ```
 
 Multiple matching paths:
-<!-- Array syntax not working due to bug: https://github.com/anthropics/claude-code/issues/17204 -->
 ```markdown
 ---
-paths: "src/**/*.{ts,tsx},lib/**/*.ts"
+paths:
+  - "src/**/*.{ts,tsx}
+  - "lib/**/*.ts"
 ---
 ```
 
