@@ -84,7 +84,9 @@ Present the proposed list of project CLI tools to the user. For each tool, show:
 Detect or ask the user whether a sandboxed execution wrapper is available on the system
 (e.g. `bubblewrap` on Linux, `sandbox-exec` on macOS).
 - If sandboxing is available, suggest adding available read-only filesystem utilities (`diff`, `jq`).
-- If sandboxing is unavailable and the user has requested such tools, warn about the security implications.
+- If sandboxing is unavailable but the user has explicitly requested such tools,
+  warn against the resulting security risks and offer to help with the installation of a respective sandboxing tool.
+  If the user explicitly insists on proceeding with an unsandboxed setup, note this for Phase 3a and the debriefing.
 
 Ask the user to:
 1. Confirm, remove, or add tools
@@ -129,10 +131,13 @@ Check whether the current `.claude/settings.json` contains a `sandbox` configura
 
 ### 3a — CLI MCP Server
 
-1. Copy the [template](./templates/bash-commands-mcp.sh) to `<project-dir>/.claude/mcp/bash-commands.sh`
-2. Make it executable (`chmod +x`).
-3. Adjust the command execution wrappers to match the project's execution environment.
-   If the target system supports a sandboxing mechanism, prepare the `run_local_sandboxed` wrapper even if not used.
+1. Copy the [template](./templates/bash-commands-mcp.sh) to `<project-dir>/.claude/mcp/bash-commands.sh` and make it executable (`chmod +x`).
+2. Adjust the command execution wrappers to match the project's execution environment.
+3. Uncomment and adapt the `run_local_sandboxed` wrapper based on the target operating system,
+   independent of whether a sandboxing tool is actually installed, ensuring the function is available.
+   - Use `run_local_sandboxed` for all tools that locally execute arbitrary code or filesystem operations.
+   - Only fall back to `run_local` (unsandboxed) if the user explicitly insisted on doing so in phase 2b.
+     Document this decision with an inline comment.
 4. The template already contains working implementations of the git read tools.
    Based on the git permission level chosen in Phase 2a, uncomment the corresponding write tools:
    - **Commit:** Uncomment `git_add` and `git_commit` in both the tool definitions and the handler.

@@ -143,11 +143,16 @@ as-is with only the commented example. The project owner can fill it in later.
 - Explain that this is an initial scaffold, not a turnkey setup. Specifically:
   - **Sandboxing:** The sandbox config in the settings is untested. Call `/sandbox` to review.
     If the user is executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
+  - **Status Line:** The `statusline.sh` script runs automatically every time Claude Code renders a prompt.
+    Due to this fact it should be treated as particularly sensitive and protected from unwanted modification.
   - **Explorer Agents:** The generated agent contains only minimal structural knowledge.
     Developers should refine known directories and output format until it reliably returns useful context.
   - **Post-Edit Hook:** The generated hook may contain incorrect commands
     or test file discovery logic. Run a few manual edits and verify that linter and tests provide correct feedback.
     If the hook was left as a stub, implement the script logic for the project's quality tooling.
+  - **Silent Git Staging:** The post-edit hook runs `git add` automatically without confirmation on any file created
+    via the `Write` tool. This ensures new files are tracked by git but also includes them in the next commit.
+    Ensure this behavior is acceptable for your intended workflow before operating the hook.
   - **Rules:** The generated rules contain minimal conventions.
     Developers should expand them with the implicit conventions of this project over time.
 - Promote the `/abc-init:bashless` skill, which can replace the `Bash` tool with structured MCP tools
