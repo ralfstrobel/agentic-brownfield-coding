@@ -110,6 +110,7 @@ For each MCP server identified during reconnaissance phase 1b with more than ~5 
 
 Recommendations:
  - Advise to keep search/find tools (especially indexed/semantic/structural/symbolic search).
+ - Advise against redundant tools (overlapping functions) that make tool-choice less obvious.
  - Warn about tools that can execute external actions such as IDE run configurations.
 
 **Important:** Always recommend deactivation of tools that can read or edit/refactor files!
