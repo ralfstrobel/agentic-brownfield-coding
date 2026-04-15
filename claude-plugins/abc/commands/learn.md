@@ -1,6 +1,6 @@
 ---
 description: Codify implicit codebase knowledge as agent rules.
-argument-hint: [fact, concept or topic]
+argument-hint: "[ explicit fact | conversation aspect ] into [ rule file or directory (optional) ]"
 metadata:
   hint: >
     This command is best executed mid-conversation to capture missing implicit knowledge contextually.
@@ -9,48 +9,49 @@ metadata:
 
 # Codify Implicit Knowledge
 
-Create or update rule files to capture implicit knowledge about the code base.
+Create or update agent rule files to capture implicit knowledge about the code base.
 
-## Phase 1: Understand the Scope
+## Phase 1: Determine What to Learn
 
-1. Consider the following arguments given by the user: $ARGUMENTS
-   Arguments may contain knowledge facts to learn, topics, conventions, or concepts to focus on.
-2. If you already had a prior conversation or development session with the user, reflect:
-    - What was unclear, ambiguous, or required explicit user guidance (relating to the given topic)?
-    - What implicit conventions, constraints, or gotchas were discovered?
-3. If target knowledge content still unclear, discuss with the user to clarify what should be codified.
+Consider the following arguments given by the user: $ARGUMENTS
 
-## Phase 2: Explore and Extract Concepts
+Determine the goal of this learning session based on the given user input:
 
-This phase is only relevant if the user has referenced specific parts of the code base
-that were not already part of a prior conversation. Skip this phase otherwise.
+**A — Conversation learning (no arguments, or arguments refine focus only):**
+Reflect on the prior conversation or development session with the user:
+- What was unclear, ambiguous, or required explicit user guidance?
+- What implicit conventions, constraints, or gotchas were discovered?
 
-Use an appropriate **explorer subagent** to locate and read relevant code parts.
+**B — Explicit fact (arguments contain a concrete statement to codify):**
+The user has stated a fact directly in: $ARGUMENTS
+- Treat the argument text as the knowledge to capture.
+- If the fact references specific code, use an **explorer subagent** to read that code for correct context.
 
-Present your findings to the user for confirmation and clarification.
+If neither source yields clear content, ask the user what to capture before continuing.
 
-## Phase 3: Place the Rule
+## Phase 2: Place the Rule
 
-### 3a — Determine the owning rules directory
+### 2a — Determine the target rules directory
 
 Rules always live in `.claude/rules` directories.
 
-Respect location preferences for creating new rules that were explicitly specified via context or user arguments.
+Respect user preferences for the **target directory** that were explicitly specified via context or arguments.
 Otherwise, default to the global `<project-dir>/.claude/rules` directory.
 
-### 3b — Check for existing related rules
+### 2b — Check for existing related rules
 
-1. Use an appropriate **explorer subagent** (or native filesystem tools if non-available)
-   to search the owning rules directory for existing content related to the new knowledge.
-2. If relevant rule files already exist, choose the best fitting one as the selected **target file** and skip to 3d.
+1. Use an appropriate **explorer subagent** or dedicated search tools
+   to search the **target directory** for existing content related to the new knowledge.
+2. If relevant rule files already exist, choose the best fitting as the selected **target file(s)** and skip to 2d.
 
-### 3c — Choose file name and subdirectory
+### 2c — Choose name(s) of any new rule file(s)
 
-If creating a new rule:
-1. List the subdirectories of the owning rules directory and choose one as the **target directory** if it fits semantically.
+Skip this step if all knowledge to manifest already has appropriate target files. 
+
+1. List the subdirectories of the **target directory** and choose one if it fits semantically.
 2. Choose the **target file** name using descriptive kebab-case (e.g., `api-error-handling.md`, `test-conventions.md`).
 
-### 3d — Path scoping via frontmatter
+### 2d — Path scoping via frontmatter
 
 Rules apply to files matching the `paths` glob declared in their YAML frontmatter.
 Each path is relative to the `.claude` directory that contains the `rules/` folder.
@@ -73,31 +74,42 @@ paths:
 
 Present the chosen target file path and a brief content outline to the user for confirmation before writing.
 
-## Phase 4: Write the Rule
+## Phase 3: Write the Rule
 
 ### Content Focus
 
-**Important:** The codebase is subject to change and must remain the source of truth for implementation details.
-Only codify knowledge that **cannot be inferred** from reading the code itself to avoid drift.
+The goal is to reduce friction for the next agent working in this codebase.
+For each content aspect candidate, ask: does it answer one of these two questions?
+
+1. **Navigation shortcut** — "Which files should I have read first to understand this faster?"
+   → Point to those files and describe why/when they matter. Don't describe what's in them.
+   Also applies when the knowledge *is* in code/docs but hard to find or easy to misread:
+   - **Gotchas / non-obvious requirements** — point to a location that defines or represents correct usage.
+   - **Ambiguities** — code suggests A, correct answer is B. Name a file where correct usage can be observed.
+   - **Conventions / Naming** — abbreviations, domain vocabulary. Point to files that define or use them canonically.
+2. **Tribal knowledge** — "What did I need to know that no amount of reading the code could reveal?"
+   → State that fact. Common types:
+   - **External constraints**, implicit system behavior, undocumented usage instructions
+   - **Team decisions**, reasons behind architectural choices
+   - **Non-functional requirements** without documentation
+
+If an item answers neither question, discard it — the code already conveys it.
+
+**Important:** The codebase MUST always remain the source of truth for implementation details.
 Do not list specific class members, only refer to entire files or classes by name if essential.
 
-Focus on:
-- Unintuitive **conventions** and **naming** (e.g., abbreviations, domain vocabulary)
-- **Architectural constraints** and their reasoning (why, not what)
-- **Gotchas**, non-obvious requirements, and common mistakes
-- **Ambiguities** where the code structure suggests one approach but the correct one differs
-- **Cross-cutting concerns** that are not apparent from a single file or directory
+**Note:** Improving embedded code documentation is a valid alternative to writing agent rules.
 
 ### Content Style
 
 You are writing instructions for other AI coding agents.
 Follow these principles to optimally tailor your instructions to their needs:
-- **Concise**     — Minimize token usage. Prefer keywords and terse bullet points over prose.
+- **Concise** — Minimize token usage. Prefer keywords and enumeration over prose.
   No verbose introductions or concept explanations.
-- **Structured**  — Use compact Markdown to delineate connected aspects.
-- **Actionable**  — Generate concrete operational directives, not abstract guidelines.
+- **Structured** — Use compact Markdown to delineate connected aspects.
+- **Actionable** — Generate concrete operational directives, not abstract guidelines.
   Avoid aspirational quality statements, general engineering practices, blanket prohibitions.
-- **Referential** — Provide pointers to code files the agents can read themselves rather than describing the code.
+- **Referential** — Provide pointers to content agents can read rather than describing/repeating it.
 
 ### Language
 
@@ -121,4 +133,4 @@ but combine new context into the existing structure efficiently.
 
 - Deduplicate overlapping points
 - Remove statements the code now makes self-evident
-- Reorder to group related items
+- Consolidate new points into existing sections rather than appending
