@@ -1,6 +1,7 @@
 ---
 description: Mini spec-first development workflow for complex implementation tasks with human in the loop.
 argument-hint: describe the desired changes, goals, constraints and other guidelines
+disable-model-invocation: true
 metadata:
   inspiration1: "https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/ace-fca.md#what-works-even-better-frequent-intentional-compaction"
   inspiration2: "https://addyosmani.com/blog/ai-coding-workflow/"

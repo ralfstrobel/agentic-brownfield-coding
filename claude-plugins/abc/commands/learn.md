@@ -1,6 +1,7 @@
 ---
 description: Codify implicit codebase knowledge as agent rules.
 argument-hint: "[ explicit fact | conversation aspect ] into [ rule file or directory (optional) ]"
+disable-model-invocation: true
 metadata:
   hint: >
     This command is best executed mid-conversation to capture missing implicit knowledge contextually.
@@ -46,7 +47,7 @@ Otherwise, default to the global `<project-dir>/.claude/rules` directory.
 
 ### 2c — Choose name(s) of any new rule file(s)
 
-Skip this step if all knowledge to manifest already has appropriate target files. 
+Skip this step if all knowledge to manifest already has appropriate target files.
 
 1. List the subdirectories of the **target directory** and choose one if it fits semantically.
 2. Choose the **target file** name using descriptive kebab-case (e.g., `api-error-handling.md`, `test-conventions.md`).
@@ -54,7 +55,7 @@ Skip this step if all knowledge to manifest already has appropriate target files
 ### 2d — Path scoping via frontmatter
 
 Rules apply to files matching the `paths` glob declared in their YAML frontmatter.
-Each path is relative to the `.claude` directory that contains the `rules/` folder.
+Each path is relative to the parent directory of the `.claude` directory that contains the `rules/` folder.
 
 Single matching path:
 ```markdown
@@ -84,14 +85,14 @@ For each content aspect candidate, ask: does it answer one of these two question
 1. **Navigation shortcut** — "Which files should I have read first to understand this faster?"
    → Point to those files and describe why/when they matter. Don't describe what's in them.
    Also applies when the knowledge *is* in code/docs but hard to find or easy to misread:
-   - **Gotchas / non-obvious requirements** — point to a location that defines or represents correct usage.
-   - **Ambiguities** — code suggests A, correct answer is B. Name a file where correct usage can be observed.
-   - **Conventions / Naming** — abbreviations, domain vocabulary. Point to files that define or use them canonically.
+    - **Gotchas / non-obvious requirements** — point to a location that defines or represents correct usage.
+    - **Ambiguities** — code suggests A, correct answer is B. Name a file where correct usage can be observed.
+    - **Conventions / Naming** — abbreviations, domain vocabulary. Point to files that define or use them canonically.
 2. **Tribal knowledge** — "What did I need to know that no amount of reading the code could reveal?"
    → State that fact. Common types:
-   - **External constraints**, implicit system behavior, undocumented usage instructions
-   - **Team decisions**, reasons behind architectural choices
-   - **Non-functional requirements** without documentation
+    - **External constraints**, implicit system behavior, undocumented usage instructions
+    - **Team decisions**, reasons behind architectural choices
+    - **Non-functional requirements** without documentation
 
 If an item answers neither question, discard it — the code already conveys it.
 
