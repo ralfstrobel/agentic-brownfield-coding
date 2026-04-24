@@ -2,7 +2,11 @@
 input=$(cat)
 
 MODEL=$(echo "$input" | jq -r '.model.display_name')
+EFFORT=$(echo "$input" | jq -r '.effort.level // empty')
+THINKING=$(echo "$input" | jq -r '.thinking.enabled // empty')
+[ "$THINKING" = "true" ] && [ -n "$EFFORT" ] && MODEL="$MODEL $EFFORT"
 CONTEXT_USED=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
+CONTEXT_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
 
 LIMIT_5H_USED=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty' | cut -d. -f1)
 LIMIT_5H_RESET=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
@@ -31,6 +35,10 @@ if [ -n "$LIMIT_7D_USED" ]; then
     LIMITS_OUTPUT="${LIMITS_OUTPUT:+$LIMITS_OUTPUT | }$PART"
 fi
 
-CONTEXT_OUTPUT="$(colorPercentage "$CONTEXT_USED" 50 70)"
+if [ "$CONTEXT_SIZE" -ge 500000 ] 2>/dev/null; then
+    CONTEXT_OUTPUT="$(colorPercentage "$CONTEXT_USED" 30 50)"
+else
+    CONTEXT_OUTPUT="$(colorPercentage "$CONTEXT_USED" 50 70)"
+fi
 
 printf "[%s] %s context%s\n" "$MODEL" "$CONTEXT_OUTPUT" "${LIMITS_OUTPUT:+ | $LIMITS_OUTPUT}"
