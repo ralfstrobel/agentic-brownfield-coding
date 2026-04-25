@@ -169,26 +169,27 @@ All rules go under the **project root** `.claude/rules/<sub-project-slug>/` so t
     - Set the `paths` glob to match only test files within the sub-project pattern.
     - Populate with concrete test conventions discovered in Phase 1 or interview answers.
 
-### 3f — Post-Edit Hook
+### 3f — Quality Gate Hooks
 
-This is a single project-wide hook (not per sub-project). The created script delegates internally.
+The following hooks are project-wide (not per sub-project) and pre-registered in the settings template.
+They depend on `bash 4+`, `jq`, and `tac` — check that these are on PATH and report any missing one in the debriefing.
 
-1. Copy the [template](./templates/post-edit-hook.sh) to `<project-dir>/.claude/hooks/post-edit.sh`
-2. Make it executable (`chmod +x`).
-3. Replace the `{{FILE-TYPE-CASES}}` placeholder with concrete dispatching logic
-   using the linting tools (Q8) and test frameworks (Q7) from **all** sub-project interviews.
-   Follow the pattern from the commented example in the template:
-    - Match test files first (most specific glob), run formatter/linter + execute the test directly.
-    - Match source files, run formatter/linter + derive and run the associated test file.
-    - Fall through to `exit 0` for unrecognized file types.
-    - For monorepos, the file type cases typically need to distinguish sub-projects by path prefix
-      before dispatching to the appropriate tools (e.g. `services/backend/*.py` vs `web/*.ts`).
-    - If test file discovery requires mapping source paths to test paths,
-      derive the convention from directory structure observed during Phase 1.
+If a sub-project's quality tooling is unclear or not yet set up, leave its cases out or place illustrative comments only.
+The project owner can extend the hooks later.
 
-If the project's quality tooling is unclear or not yet set up for some sub-projects,
-leave those cases out and include only the sub-projects with known tooling.
-The project owner can extend the hook later.
+#### Post-Edit hook
+
+1. Copy the [template](./templates/post-edit-hook.sh) to `<project-dir>/.claude/hooks/post-edit.sh` and `chmod +x`.
+2. Replace `{{FILE-TYPE-CASES}}` with dispatching logic using the linting/formatting tools from all sub-projects' Q8.
+   If handling of same file types differs between sub-projects, distinguish by path prefix before dispatching.
+
+#### Stop hook
+
+1. Copy the [template](./templates/stop-hook.sh) to `<project-dir>/.claude/hooks/stop.sh` and `chmod +x`.
+2. Replace the placeholders using all sub-projects' test frameworks (Q7) and conventions from Phase 1.
+   Only split the mapping further by sub-project if two sub-projects share technology but use different testing methods.
+3. Tailor the `append_test_coverage_reminder` strings to encompass all sub-projects' review/testing cultures;
+   optionally add further conditional `append_reminder` calls for (sub-)project-specific code change concerns.
 
 ## Phase 4: Debriefing & Disclaimers
 
@@ -202,9 +203,10 @@ The project owner can extend the hook later.
     Due to this fact it should be treated as particularly sensitive and protected from unwanted modification.
   - **Explorer Agents:** The generated agents contain only minimal structural knowledge.
     Developers should refine known directories and output format until they reliably return useful context.
-  - **Post-Edit Hook:** The generated hook may contain incorrect commands
-    or test file discovery logic. Run a few manual edits and verify that linter and tests provide correct feedback.
-    If the hook was left as a stub, implement the script logic for each sub-project's quality tooling.
+  - **Quality Gate Hooks:** The generated commands and test-file discovery logic may be incorrect.
+    Trigger both hooks via a few manual edits and a full agent turn (modifying source and test files)
+    in each sub-project, and verify that linter feedback, executed tests, and coverage reminders all work as intended.
+    If a hook was left as a stub for some sub-projects, implement their project-specific dispatching logic.
   - **Silent Git Staging:** The post-edit hook runs `git add` automatically without confirmation on any file created
     via the `Write` tool. This ensures new files are tracked by git but also includes them in the next commit.
     Ensure this behavior is acceptable for your intended workflow before operating the hook.

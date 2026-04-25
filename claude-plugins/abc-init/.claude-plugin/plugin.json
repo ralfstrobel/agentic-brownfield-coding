@@ -1,5 +1,5 @@
 {
     "name": "abc-init",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Guided workflows for human-led Claude Code scaffolding in complex brownfield codebases."
 }

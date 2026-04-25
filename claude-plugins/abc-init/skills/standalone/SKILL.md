@@ -119,21 +119,25 @@ If a `.gitignore` file exists in the project root, append the following entries 
 
 If any of these steps seem inapplicable to the given project, skip them and note this during the summary.
 
-### 3f — Post-Edit Hook
+### 3f — Quality Gate Hooks
 
-1. Copy the [template](./templates/post-edit-hook.sh) to `<project-dir>/.claude/hooks/post-edit.sh`
-2. Make it executable (`chmod +x`).
-3. Replace the `{{FILE-TYPE-CASES}}` placeholder with concrete dispatching logic
-   using the linting tools (Q8) and test framework (Q7) established during the interview.
-   Follow the pattern from the commented example in the template:
-    - Match test files first (most specific glob), run formatter/linter + execute the test directly.
-    - Match source files, run formatter/linter + derive and run the associated test file.
-    - Fall through to `exit 0` for unrecognized file types.
-4. If test file discovery requires mapping source paths to test paths,
-   derive the convention from directory structure observed during Phase 1
-   (e.g. `src/Foo.ts` → `src/__tests__/Foo.test.ts`, or `src/Foo.php` → `tests/FooTest.php`).
-If the project's quality tooling is unclear or not yet set up, leave the `{{FILE-TYPE-CASES}}` placeholder
-as-is with only the commented example. The project owner can fill it in later.
+The following hooks are pre-registered in the settings template.
+They depend on `bash 4+`, `jq`, and `tac` — check that these are on PATH and report any missing one in the debriefing.
+
+If the project's quality tooling is unclear or not yet set up, place illustrative example comments in the output file.
+The project owner can fill in the correct code later.
+
+#### Post-Edit hook
+
+1. Copy the [template](./templates/post-edit-hook.sh) to `<project-dir>/.claude/hooks/post-edit.sh` and `chmod +x`.
+2. Replace `{{FILE-TYPE-CASES}}` with dispatching logic using the linting/formatting tools from Q8.
+
+#### Stop hook
+
+1. Copy the [template](./templates/stop-hook.sh) to `<project-dir>/.claude/hooks/stop.sh` and `chmod +x`.
+2. Replace the placeholders using the test framework from Q7 and conventions from Phase 1.
+3. Tailor the `append_test_coverage_reminder` strings to the project's review/testing culture;
+   optionally add further conditional `append_reminder` calls for project-specific code change concerns.
 
 ## Phase 4: Debriefing & Disclaimers
 
@@ -147,9 +151,10 @@ as-is with only the commented example. The project owner can fill it in later.
     Due to this fact it should be treated as particularly sensitive and protected from unwanted modification.
   - **Explorer Agents:** The generated agent contains only minimal structural knowledge.
     Developers should refine known directories and output format until it reliably returns useful context.
-  - **Post-Edit Hook:** The generated hook may contain incorrect commands
-    or test file discovery logic. Run a few manual edits and verify that linter and tests provide correct feedback.
-    If the hook was left as a stub, implement the script logic for the project's quality tooling.
+  - **Quality Gate Hooks:** The generated commands and test-file discovery logic may be incorrect.
+    Trigger both hooks via a few manual edits and a full agent turn (modifying source and test files),
+    and verify that linter feedback, test execution, and automated reminders all work as intended.
+    If a hook was left as a stub, implement its project-specific dispatching logic.
   - **Silent Git Staging:** The post-edit hook runs `git add` automatically without confirmation on any file created
     via the `Write` tool. This ensures new files are tracked by git but also includes them in the next commit.
     Ensure this behavior is acceptable for your intended workflow before operating the hook.
