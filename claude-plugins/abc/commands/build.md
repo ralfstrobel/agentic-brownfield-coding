@@ -6,6 +6,7 @@ metadata:
   inspiration1: "https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/ace-fca.md#what-works-even-better-frequent-intentional-compaction"
   inspiration2: "https://addyosmani.com/blog/ai-coding-workflow/"
   related: "https://github.com/gsd-build/get-shit-done/blob/main/get-shit-done/workflows/quick.md"
+  related2: "https://github.com/ThinkUpfront/Upfront/blob/main/plugin/skills/quick/SKILL.md"
   background: "https://arxiv.org/html/2602.00180v1"
   note: >
     The Implement phase is intentionally minimal. Context may be cleared or compacted before or during implementation.
@@ -23,7 +24,8 @@ Adhere strictly to the following development workflow protocol.
 
 1. Establish which repo components or sub-projects are target of the development (from user request or user role).
 2. Invoke any skills relevant to the development scope.
-3. Ensure you have clearly understood the user's intent. Ask for clarification if instructions are vague or ambiguous.
+3. Confirm the user's intent: the problem being solved, success criteria, what is out of scope, design constraints.
+   Ask the user only about points the request and context leave genuinely unclear.
 
 ## Phase 2: Research
 
@@ -31,23 +33,32 @@ Adhere strictly to the following development workflow protocol.
    Launch multiple exploration agents in parallel when the request spans different components or sub-projects.
 2. Pay special attention to system reminders that disclose additional context or skills upon reading files
    as such path-specific context is typically highly relevant. Invoke skills or read referenced files as suggested.
-3. Ask for clarification if code research revealed new ambiguities regarding the development request.
 
-## Phase 3: Strategize
+## Phase 3: Challenge
+
+Scrutinize the request based on the research findings. Probe at minimum:
+- **Failure modes** and edge cases.
+- **Hidden complexity** the request glosses over.
+- **Security and invariants** the existing architecture depends on.
+
+Surface the resulting risks, assumptions, and open questions to the user,
+and resolve blocking ambiguities before moving on.
+
+## Phase 4: Strategize
 
 Formulate between two and four different implementation approaches (one sentence summaries).
 
-Think hard about this and challenge your ideas. Intentionally vary approaches along dimensions that matter most in complex codebases:
-- **Invasion depth:** How much existing code is modified vs. extended or wrapped around?
-- **Dependency direction:** Does new code adapt to existing structures, or does it introduce abstractions that existing code is refactored to use?
-- **Change scope:** Minimal surgical change vs. addressing underlying structural issues that created the need?
+Think hard about this and intentionally vary approaches along dimensions that matter most in complex codebases:
+- **Scope:** How much existing code is modified vs. extended or wrapped around?
+- **Conformity:** Does the approach adopt existing structures, or does it introduce new concepts/abstractions?
+- **Changeability:** How easy will it be to modify the resulting code for new requirements?
 
 Present the final approach options to the user to choose from or discuss.
 
-## Phase 4: Decompose
+## Phase 5: Decompose
 
 1. Break the chosen approach into top-level tasks.
-   - Each task must operate at the same level of abstraction 
+   - Each task must operate at the same level of abstraction
    - Each task must leave the codebase in a state that executes without errors.
    - If earlier conversation required user clarification to understand existing code, include a task
      to improve that code's self-documentation (rename unclear identifiers, add explanatory comments, ...).
@@ -57,9 +68,9 @@ Present the final approach options to the user to choose from or discuss.
    - **Manual:** User performs concrete verification steps manually (agent may suggest commands, URLs, edge cases).
 3. Present the tasks with their proposed verification modes and iterate until the user approves.
 
-## Phase 5: Plan
+## Phase 6: Plan
 
-Use the `EnterPlanMode` tool, then write up the full plan detail.
+Use the `EnterPlanMode` tool (**important, do not skip**), then write up the full plan detail.
 
 The plan must be detailed enough to survive context compaction, as the agent may lose
 the original workflow instructions before execution begins.
@@ -96,6 +107,6 @@ Include these instructions verbatim at the end of the plan for the executing age
 - Work through the `TaskList` sequentially using `TaskUpdate` to mark tasks as in_progress and completed as you go.
 - **Pause after each top-level task** for user confirmation before proceeding.
 
-## Phase 6: Implement
+## Phase 7: Implement
 
 Execute the plan. If the plan is not present in context, ask the user to provide it.
