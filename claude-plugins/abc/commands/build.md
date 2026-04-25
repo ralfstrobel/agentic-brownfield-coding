@@ -1,5 +1,5 @@
 ---
-description: Mini spec-first development workflow for complex implementation tasks with human in the loop.
+description: Mini spec-first development workflow for well-scoped implementation tasks with human in the loop.
 argument-hint: describe the desired changes, goals, constraints and other guidelines
 disable-model-invocation: true
 metadata:
@@ -7,8 +7,8 @@ metadata:
   inspiration2: "https://addyosmani.com/blog/ai-coding-workflow/"
   related: "https://github.com/gsd-build/get-shit-done/blob/main/get-shit-done/workflows/quick.md"
   background: "https://arxiv.org/html/2602.00180v1"
-  comment: >
-    The Implementation phase is intentionally minimal. Context may be cleared or compacted before or during implementation.
+  note: >
+    The Implement phase is intentionally minimal. Context may be cleared or compacted before or during implementation.
     The plan phase therefore embeds execution instructions directly into the plan to ensure they survive compaction.
     Verification steps are part of the plan. Code review needs be executed as a separate workflow before submission.
 ---
@@ -19,7 +19,7 @@ The user wants to make the following complex additions / changes to the codebase
 
 Adhere strictly to the following development workflow protocol.
 
-## Phase 1: Definition
+## Phase 1: Define
 
 1. Establish which repo components or sub-projects are target of the development (from user request or user role).
 2. Invoke any skills relevant to the development scope.
@@ -33,7 +33,7 @@ Adhere strictly to the following development workflow protocol.
    as such path-specific context is typically highly relevant. Invoke skills or read referenced files as suggested.
 3. Ask for clarification if code research revealed new ambiguities regarding the development request.
 
-## Phase 3: Strategizing
+## Phase 3: Strategize
 
 Formulate between two and four different implementation approaches (one sentence summaries).
 
@@ -44,7 +44,7 @@ Think hard about this and challenge your ideas. Intentionally vary approaches al
 
 Present the final approach options to the user to choose from or discuss.
 
-## Phase 4: Shaping
+## Phase 4: Decompose
 
 1. Break the chosen approach into top-level tasks.
    - Each task must operate at the same level of abstraction 
@@ -57,7 +57,7 @@ Present the final approach options to the user to choose from or discuss.
    - **Manual:** User performs concrete verification steps manually (agent may suggest commands, URLs, edge cases).
 3. Present the tasks with their proposed verification modes and iterate until the user approves.
 
-## Phase 5: Planning
+## Phase 5: Plan
 
 Use the `EnterPlanMode` tool, then write up the full plan detail.
 
@@ -68,12 +68,12 @@ Quote or summarize the original user arguments in the introduction of the plan.
 
 ### Sub-Tasks
 
-Decompose each top-level task (as agreed in Shaping) into ordered sub-tasks
+Decompose each top-level task (as agreed in Decompose) into ordered sub-tasks
 with concrete actions (file paths, function names, patterns to follow).
 
 ### Verification
 
-For each top-level task, add a verification sub-task using the mode agreed in Shaping:
+For each top-level task, add a verification sub-task using the mode agreed in Decompose:
 1. **TDD:** Insert the test sub-task **before** all other sub-tasks.
 2. **Agentic:** Insert the verification sub-task **after** all other sub-tasks.
 3. **Manual:** Insert a sub-task **after** all other sub-tasks with guidance for the user.
@@ -96,6 +96,6 @@ Include these instructions verbatim at the end of the plan for the executing age
 - Work through the `TaskList` sequentially using `TaskUpdate` to mark tasks as in_progress and completed as you go.
 - **Pause after each top-level task** for user confirmation before proceeding.
 
-## Phase 6: Implementation
+## Phase 6: Implement
 
 Execute the plan. If the plan is not present in context, ask the user to provide it.
