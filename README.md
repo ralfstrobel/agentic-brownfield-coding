@@ -93,8 +93,9 @@ the focus will likely remain on Claude Code due to time constraints.
 - The official Claude Code plugins include a toolkit for [skill creation](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator), also suitable for workflow commands.
 - [superpowers](https://github.com/obra/superpowers) is a well-known plugin for enhanced workflows.
 - [GET SHIT DONE](https://github.com/gsd-build/get-shit-done) is a light-weight spec-driven approach for iterative development.
+- [Think Upfront](https://github.com/ThinkUpfront/Upfront) provides a robust workflow for human-first agentic development.
 - [Awesome Claude Code](https://github.com/hesreallyhim/awesome-claude-code) is a curated list of high-quality Claude Code artifacts.
-- [The Delivery Gap](https://github.com/brennhill/Delivery-Gap-Toolkit) book and companion repo provide actionable approaches for agentic coding in production.
+- [Awesome Harness Engineering](https://github.com/ai-boost/awesome-harness-engineering) is a list focused specifically on harness design.
 
 ## License
 
