@@ -242,10 +242,10 @@ However, access to unstructured CLI tools also introduced several new problems:
    - The `Edit` tool commonly serves as the trigger for post-edit hooks or may be entirely prohibited for read-only agents,
      but models can bypass these restrictions easily by using `Bash(sed)`.
 
-This is why the trend is already shifting back towards structured primitive tools, though with a new twist of
-exposing these tools as composable building blocks inside a
+This is why the trend is already shifting back towards structured primitive tools, under the new paradigm of
+"programmatic tool calling" – exposing tools as composable building blocks inside a
 [controlled DSL](https://yortuc.com/posts/securing-shell-execution-agents/#the-fundamental-trade-off-shell-vs-structured-approaches),
-an [abstract execution layer](https://blog.cloudflare.com/code-mode/)
+an [abstract execution layer](https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling)
 or a [pseudo-shell with reduced features](https://github.com/vercel-labs/just-bash).
 
 ### Alternative: Curated MCP Tools
