@@ -18,6 +18,12 @@ and controlled interactive workflows to rein in the non-determinism of coding ag
 Details about the concrete hypotheses and design philosophy behind the ABC solutions
 can be found in the full length [background essay](BACKGROUND.md).
 
+## System Requirements
+
+- **Linux** — natively supported, requires [jq](https://jqlang.org/download/) installed
+- **macOS** — supported (agent will substitute GNU-only utilities), requires [jq](https://jqlang.org/download/) installed
+- **Windows** — requires [Git Bash](https://git-scm.com/download/win) and [jq](https://www.geeksforgeeks.org/git/how-to-install-jq-in-git-bash/) on PATH
+
 ## Installation
 
 ```bash

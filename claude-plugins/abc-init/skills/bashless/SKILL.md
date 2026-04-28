@@ -18,6 +18,12 @@ rather than being attracted to unstructured shell access.
 **Language hint**: Always create all generated script content and comments in English,
 while continuing to speak to the user in the language of their choice.
 
+**Platform hint**: Instructions and templates assume a Linux host with GNU coreutils. Adapt to the detected user OS.
+- macOS   — Substitute BSD equivalents for GNU-only utilities.
+- Windows — Still use `.sh` files (skip irrelevant `chmod +x`), assuming Git Bash is available at runtime.
+            Highlight this requirement in the Debriefing. Set `"shell": "bash"` on new command hooks in `settings.json`.
+            Launch the MCP server via bash rather than putting the `.sh` path directly in `command`.
+
 # Workflow
 
 1. Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool.
@@ -188,6 +194,7 @@ Modify `.claude/settings.json` to disable the `Bash` tool (and optionally `Glob`
 1. Ensure `"enableAllProjectMcpServers": true` is present in the settings.
 2. Add `"mcp__bash__*"` to the `permissions.allow` array (create it if it does not exist).
 3. Add `"Bash"` to the `permissions.deny` array (create it if it does not exist).
+   Also add `"PowerShell"` tool to deny list on Windows hosts.
 4. If the user chose to disable `Glob` and `Grep` in Phase 2c, also add `"Glob"` and `"Grep"` to `permissions.deny`.
 5. Add every MCP tool the user explicitly or implicitly chose to remove in Phase 2d to `permissions.deny`.
    Use the wildcard pattern only if the user wants to exclude all tools from a server (e.g. `"mcp__<server>__*"`).

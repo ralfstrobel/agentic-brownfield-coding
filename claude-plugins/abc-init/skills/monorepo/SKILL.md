@@ -17,6 +17,11 @@ to obtain the required base knowledge about the goals and structure of the proje
 **Language hint**: Always create all generated document content in English,
 while continuing to speak to the user in the language of their choice.
 
+**Platform hint**: Instructions and templates assume a Linux host with GNU coreutils. Adapt to the detected user OS.
+- macOS   — Substitute BSD equivalents for GNU-only utilities.
+- Windows — Still use `.sh` files (skip irrelevant `chmod +x`), assuming Git Bash is available at runtime.
+            Highlight this requirement in the Debriefing. Set `"shell": "bash"` on command hooks in `settings.json`.
+
 ## Agent Content Principles
 
 When generating content for `.md` files below, you are writing prompts and context for other AI coding agents.
