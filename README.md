@@ -62,9 +62,10 @@ These commands should be run using Opus as they require complex code base reason
 > that run automatically as part of the Claude Code harness — review and safeguard these files against manipulation!
 
 > [!NOTE]
-> The scaffolding result is not a turnkey solution and requires thorough testing for every new code base.
+> The scaffolding result is not a turnkey solution and requires thorough testing for every new codebase.
 > As even frontier models sometimes struggle to follow long workflows,
 > you may want to read the skill yourself and compare it against your output.
+> Agent instructions produced by agents are notoriously too verbose and often need to be condensed.
 
 ### Workflows
 
@@ -76,7 +77,7 @@ These commands provide basic examples for agentic workflows during code developm
 > [!NOTE]
 > While the commands can be used productively, their main purpose is to be illustrative.
 > You are encouraged to use them as templates to create your own custom workflows for your needs.
-> The references section below further links to various sources for more advanced workflow skills.
+> The further reading section below links to various sources for advanced workflow concepts.
 
 ### Agents
 
@@ -94,12 +95,18 @@ that form the base of the ABC solutions – primarily custom subagents, commands
 As long as no suitable standard for these solutions is adopted by a majority of assistants,
 the focus will likely remain on Claude Code due to time constraints.
 
-## Shoutouts and Related Projects
+## Further Reading
 
-- The official Claude Code plugins include a toolkit for [skill creation](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator), also suitable for workflow commands.
+### Shoutouts and Related Projects
+
 - [superpowers](https://github.com/obra/superpowers) is a well-known plugin for enhanced workflows.
-- [GET SHIT DONE](https://github.com/gsd-build/get-shit-done) is a light-weight spec-driven approach for iterative development.
+- [GET SHIT DONE](https://github.com/gsd-build/get-shit-done) is a relatively light-weight spec-driven approach for iterative development.
 - [Think Upfront](https://github.com/ThinkUpfront/Upfront) provides a robust workflow for human-first agentic development.
+- [Cole Medin's AI Workshop](https://github.com/coleam00/ai-transformation-workshop) teaches his method for building an AI-first development setup.
+
+### Directories
+
+- [Anthropic's official Claude Code plugins](https://github.com/anthropics/claude-plugins-official) contain various harness essentials.
 - [Awesome Claude Code](https://github.com/hesreallyhim/awesome-claude-code) is a curated list of high-quality Claude Code artifacts.
 - [Awesome Harness Engineering](https://github.com/ai-boost/awesome-harness-engineering) is a list focused specifically on harness design.
 
