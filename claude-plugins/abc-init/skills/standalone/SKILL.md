@@ -35,6 +35,8 @@ Follow these principles to optimally tailor your instructions to their needs:
                     Do not describe how code works in agent instructions as such duplication leads to drift.
 - **Scoped**      — Context is hierarchical. The CLAUDE.md must only contain core project identity and semantics.
                     Rules and agent instructions progressively disclose domain- and task-specific knowledge.
+- **Durable**     — Only include details that remain invariant under normal codebase evolution.
+                    Avoid specific technology versions. Reference namespaces or search terms instead of single artifacts.
 
 # Workflow
 
@@ -57,18 +59,22 @@ Follow these principles to optimally tailor your instructions to their needs:
 
 Interview the user to establish the project's base details.
 Use `AskUserQuestion` where appropriate to keep the conversation structured.
+
 Offer pre-defined choice options if likely answers to a question are already known from context.
+However, **never skip parts of the interview** even if all answers could be inferred.
+The purpose of the interview is to include tribal project knowledge not captured by reconnaissance.
 
 ### Question Catalogue
 
 1. What is the name of the project?
 2. Who is the project creator and/or maintainer (company/organization)?
 3. What is the overall purpose of the project (one-sentence summary)?
-4. What are the main technologies used (programming language, framework, deployment...)?
-5. What are key concepts or vocabulary that every developer needs to learn on their first day?
-6. What are the key source directories?
-7. How are automated tests organized and run?
-8. Are there tools for linting or other automated code quality control?
+4. What is the production scale of the project (data size, number of users)?
+5. What are the main technologies used (programming language, framework, deployment...)?
+6. What are key concepts or vocabulary that every developer needs to learn on their first day?
+7. What are the key source directories?
+8. How are automated tests organized and run?
+9. Are there tools for linting or other automated code quality control?
 
 ## Phase 3: Generate Artifacts
 

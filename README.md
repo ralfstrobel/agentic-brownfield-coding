@@ -52,7 +52,7 @@ claude plugin marketplace remove ralfstrobel/agentic-brownfield-coding
 These commands should be run using Opus as they require complex code base reasoning.
 
 - [`/abc-init:standalone`](claude-plugins/abc-init/skills/standalone/SKILL.md) – Create initial Claude Code artifacts for single-application projects.
-- [`/abc-init:monorepo`](claude-plugins/abc-init/skills/monorepo/SKILL.md) – Create initial Claude Code artifacts for monorepo-like projects.
+- [`/abc-init:monorepo`](claude-plugins/abc-init/skills/monorepo/SKILL.md) – Create initial Claude Code artifacts for monorepo projects (multiple sub-projects/teams).
 
 - [`/abc-init:bashless`](claude-plugins/abc-init/skills/bashless/SKILL.md) – (Optional) Create MCP tool wrappers for relevant CLI commands
   and disable the `Bash` tool, in order to prevent inefficient tool choice and harness bypassing via shell.

@@ -36,6 +36,8 @@ Follow these principles to optimally tailor your instructions to their needs:
 - **Scoped**      — Context is hierarchical. The central CLAUDE.md applies to every scope and must only
                     contain core project identity and semantics. Sub-project CLAUDE.md, rules and agent instructions
                     progressively disclose domain- and task-specific knowledge.
+- **Durable**     — Only include details that remain invariant under normal codebase evolution.
+                    Avoid specific technology versions. Reference namespaces or search terms instead of single artifacts.
 
 # Workflow
 
@@ -58,16 +60,20 @@ Follow these principles to optimally tailor your instructions to their needs:
 
 Interview the user to establish the project's base details and sub-project boundaries.
 Use `AskUserQuestion` where appropriate to keep the conversation structured.
+
 Offer pre-defined choice options if likely answers to a question are already known from context.
+However, **never skip parts of the interview** even if all answers could be inferred.
+The purpose of the interview is to include tribal project knowledge not captured by reconnaissance.
 
 ### General Question Catalogue
 
 1. What is the name of the project?
 2. Who is the project creator and/or maintainer (company/organization)?
 3. What is the overall purpose of the project (one-sentence summary)?
-4. What is the general technological approach of the project (one-sentence summary)?
-5. What are key concepts or vocabulary that every developer needs to learn on their first day (independent of sub-project)?
-6. What sub-projects or applications exist in this monorepo?
+4. What is the production scale of the project (data size, number of users)?
+5. What is the general technological approach of the project (one-sentence summary)?
+6. What are key concepts or vocabulary that every developer needs to learn on their first day (independent of sub-project)?
+7. What sub-projects or applications exist in this monorepo?
 
 ### Sub-Project Question Catalogue
 

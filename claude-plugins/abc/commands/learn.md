@@ -56,6 +56,7 @@ Skip this step if all knowledge to manifest already has appropriate target files
 
 Rules apply to files matching the `paths` glob declared in their YAML frontmatter.
 Each path is relative to the parent directory of the `.claude` directory that contains the `rules/` folder.
+Note: You *must* include the paths frontmatter, as otherwise the rule applies globally!
 
 Single matching path:
 ```markdown
@@ -105,12 +106,14 @@ Do not list specific class members, only refer to entire files or classes by nam
 
 You are writing instructions for other AI coding agents.
 Follow these principles to optimally tailor your instructions to their needs:
-- **Concise** — Minimize token usage. Prefer keywords and enumeration over prose.
-  No verbose introductions or concept explanations.
-- **Structured** — Use compact Markdown to delineate connected aspects.
-- **Actionable** — Generate concrete operational directives, not abstract guidelines.
-  Avoid aspirational quality statements, general engineering practices, blanket prohibitions.
+- **Concise**     — Minimize token usage. Prefer keywords and enumeration over prose.
+                    No verbose introductions or concept explanations.
+- **Structured**  — Use compact Markdown to delineate connected aspects.
+- **Actionable**  — Generate concrete operational directives, not abstract guidelines.
+                    Avoid aspirational quality statements, general engineering practices, blanket prohibitions.
 - **Referential** — Provide pointers to content agents can read rather than describing/repeating it.
+- **Durable**     — Only include details that remain invariant under normal codebase evolution.
+                    Prefer references to namespaces or search terms over single artifacts where possible.
 
 ### Language
 
