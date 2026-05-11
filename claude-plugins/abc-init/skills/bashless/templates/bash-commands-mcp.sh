@@ -46,6 +46,30 @@ TOOLS_JSON='[
     "inputSchema": { "type": "object", "properties": {} }
   },
   {
+    "name": "git_log",
+    "description": "Search git commit history.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "grep":  { "type": "string",  "description": "Filter commits whose message matches this string (case-insensitive)." },
+        "file":  { "type": "string",  "description": "Limit log to commits touching this file path." },
+        "limit": { "type": "integer", "description": "Maximum number of commits to return. Default: 20." }
+      }
+    }
+  },
+  {
+    "name": "git_show",
+    "description": "Read the contents of a commit, tag, or file at a specific revision.",
+    "inputSchema": {
+      "type": "object",
+      "required": ["ref"],
+      "properties": {
+        "ref":  { "type": "string", "description": "A commit hash, tag, branch, or revision spec (e.g. HEAD~3, abc1234, v1.0)." },
+        "file": { "type": "string", "description": "Optional file path to show at the given revision (shorthand for ref:file)." }
+      }
+    }
+  },
+  {
     "name": "git_diff",
     "description": "Read changes to a file in the git working tree compared to a commit.",
     "inputSchema": {
@@ -59,13 +83,12 @@ TOOLS_JSON='[
   },
   {
     "name": "git_rm",
-    "description": "Delete file(s) within the git working tree and also remove them from the index.",
+    "description": "Delete a file or directory within the git working tree and also remove it from the index.",
     "inputSchema": {
       "type": "object",
-      "required": ["paths"],
+      "required": ["path"],
       "properties": {
-        "paths":     { "type": "array", "items": { "type": "string" }, "description": "File or directory paths to remove." },
-        "recursive": { "type": "boolean", "description": "Allow recursive removal when a directory is given (-r). Default: false." }
+        "path": { "type": "string", "description": "File or directory path to remove (directories are removed recursively)." }
       }
     }
   },
@@ -85,35 +108,6 @@ TOOLS_JSON='[
   {{TOOL-DEFINITIONS}}
 ]'
 
-# ---------------------------------------------------------------------------
-# Git history inspection tool examples:
-#
-#  {
-#    "name": "git_log",
-#    "description": "Read the git commit history of a file.",
-#    "inputSchema": {
-#      "type": "object",
-#      "required": ["file"],
-#      "properties": {
-#        "file":  { "type": "string",  "description": "File to show history for." },
-#        "count": { "type": "integer", "description": "Number of commits to show. Default: 20." },
-#        "since": { "type": "string",  "description": "Show commits after this date or ref (e.g. \"2 weeks ago\", \"v1.0\")." }
-#      }
-#    }
-#  },
-#  {
-#    "name": "git_show_file",
-#    "description": "Read the content of a file at a specific git commit.",
-#    "inputSchema": {
-#      "type": "object",
-#      "required": ["file", "ref"],
-#      "properties": {
-#        "file": { "type": "string", "description": "Path to the file." },
-#        "ref":  { "type": "string", "description": "Commit hash, tag, or branch name." }
-#      }
-#    }
-#  },
-#
 # ---------------------------------------------------------------------------
 # Git write tool examples:
 #
@@ -207,6 +201,32 @@ handle_tool_call() {
       cmd_output=$(run_local git -P status -sbu) || exit_code=$?
       ;;
 
+    git_log)
+      local grep_str file limit args=()
+      grep_str=$(echo "$arguments" | jq -r '.grep // ""')
+      file=$(echo "$arguments"     | jq -r '.file // ""')
+      limit=$(echo "$arguments"    | jq -r '.limit // 20')
+      args+=("--oneline" "-n" "$limit")
+      [[ -n "$grep_str" ]] && args+=("--grep=$grep_str" "-i")
+      if [[ -n "$file" ]]; then
+        cmd_output=$(run_local git -P log "${args[@]}" -- "$file") || exit_code=$?
+      else
+        cmd_output=$(run_local git -P log "${args[@]}") || exit_code=$?
+      fi
+      ;;
+
+    git_show)
+      local ref file show_ref
+      ref=$(echo "$arguments"  | jq -r '.ref')
+      file=$(echo "$arguments" | jq -r '.file // ""')
+      if [[ -n "$file" ]]; then
+        show_ref="${ref}:${file}"
+      else
+        show_ref="$ref"
+      fi
+      cmd_output=$(run_local git -P show --no-color "$show_ref") || exit_code=$?
+      ;;
+
     git_diff)
       local file ref
       file=$(echo "$arguments" | jq -r '.file')
@@ -215,13 +235,10 @@ handle_tool_call() {
       ;;
 
     git_rm)
-      local recursive
-      recursive=$(echo "$arguments" | jq -r '.recursive // false')
-      mapfile -t paths < <(echo "$arguments" | jq -r '.paths[]')
-      local args=()
-      [[ "$recursive" == "true" ]] && args+=("-r")
+      local path
+      path=$(echo "$arguments" | jq -r '.path')
       # Note: Git will only remove files it tracks, effectively sandboxing the agent in the repo.
-      cmd_output=$(run_local git rm -f "${args[@]}" -- "${paths[@]}") || exit_code=$?
+      cmd_output=$(run_local git rm -rf -- "$path") || exit_code=$?
       ;;
 
     git_mv)
@@ -231,24 +248,6 @@ handle_tool_call() {
       # Note: Git will only move files it tracks, effectively sandboxing the agent in the repo.
       cmd_output=$(run_local git mv -- "$source" "$destination") || exit_code=$?
       ;;
-
-    # git_log)
-    #   local file count since
-    #   file=$(echo "$arguments"  | jq -r '.file')
-    #   count=$(echo "$arguments" | jq -r '.count // 20')
-    #   since=$(echo "$arguments" | jq -r '.since // ""')
-    #   local args=("--format=%H %cs %s" "-n" "$count")
-    #   [[ -n "$since" ]] && args+=("--since=$since")
-    #   args+=("--" "$file")
-    #   cmd_output=$(run_local git -P log "${args[@]}") || exit_code=$?
-    #   ;;
-
-    # git_show_file)
-    #   local file ref
-    #   file=$(echo "$arguments" | jq -r '.file')
-    #   ref=$(echo "$arguments"  | jq -r '.ref')
-    #   cmd_output=$(run_local git -P show "${ref}:${file}") || exit_code=$?
-    #   ;;
 
     # git_commit)
     #   local message
