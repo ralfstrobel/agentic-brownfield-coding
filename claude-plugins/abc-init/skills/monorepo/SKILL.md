@@ -126,6 +126,8 @@ Perform these steps for **every** established sub-project:
 
 1. Copy the [template](./templates/sub-project-explorer-agent.md) to `<project-dir>/.claude/agents/<sub-project-slug>-explorer.md`
 2. Replace the `{{PLACEHOLDERS}}` with acquired context for the respective sub-project.
+   Add available `{{MCP-SEARCH-TOOLS}}` for read-only exploration.
+   Omit the native `Glob` and `Grep` tools if suitable MCP replacements are present.
 3. Use a general purpose `Explore` agent to perform a more thorough exploration of the sub-project's code
    and add additional context information and instructions that are helpful to navigate the code structure
    as well as common conventions and nomenclature.

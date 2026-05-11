@@ -6,8 +6,12 @@ description: >
   When invoking, always express your intent, such as "research" / "explain" or "locate code to modify" / "locate tests".
 model: haiku
 effort: low
-permissionMode: plan
-disallowedTools: Bash
+permissionMode: dontAsk
+tools:
+  - Read
+  - Glob
+  - Grep
+  {{MCP-SEARCH-TOOLS}}
 ---
 
 # Role

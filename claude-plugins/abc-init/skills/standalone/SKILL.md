@@ -108,6 +108,8 @@ If a `.gitignore` file exists in the project root, append the following entries 
 
 1. Copy the [template](./templates/explorer-agent.md) to `<project-dir>/.claude/agents/<project-slug>-explorer.md`
 2. Replace the `{{PLACEHOLDERS}}` based on acquired context.
+   Add available `{{MCP-SEARCH-TOOLS}}` for read-only exploration.
+   Omit the native `Glob` and `Grep` tools if suitable MCP replacements are present.
 3. Use a general purpose `Explore` agent to perform a more thorough exploration of the project's code
    and add additional context information and instructions that are helpful to navigate the code structure
    as well as common conventions and nomenclature.

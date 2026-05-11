@@ -39,7 +39,7 @@ Assume the project has already been initialized with artifacts for Claude Code a
 
 ### 1a — Shell Commands
 
-Spawn an `Agent`of type `Plan` to scan the following locations for explicit and implicit references to CLI commands: 
+Spawn an `Agent` to scan the following locations for explicit and implicit references to CLI commands: 
 1. The project's `CLAUDE.md` and any sub-directory `CLAUDE.md` files
 2. The project's `.claude` directory, particularly sub-directories `commands/`, `rules/` and `agents/`
 3. Top-level documentation files (e.g. `README.md`, `CONTRIBUTING.md`, `docs/`)
@@ -55,7 +55,7 @@ Use `TaskCreate` and `TaskUpdate` to add additional blocking tasks for files tha
 
 ### 1b — MCP Tools
 
-Spawn an `Agent`of type `general-purpose` to summarize available MCP tools:
+Spawn an `Agent` to summarize available MCP tools:
 1. Read `.mcp.json` at the project root (if it exists) to identify existing project-registered servers.
 2. Use the `ToolSearch` tool to query: "+mcp__" with high max_results to fetch schemas for all available MCP tools.
 3. Return a full tool list, grouped by server (name pattern "mcp__<server>__"), with very short description per tool. 
