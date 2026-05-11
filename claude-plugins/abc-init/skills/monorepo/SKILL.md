@@ -105,7 +105,7 @@ Go through **every** sub-project established in general question 6 and repeat th
 ### 3b — Central CLAUDE.md
 
 1. Copy the [template](./templates/CLAUDE-template.md) to `<project-dir>/CLAUDE.md`
-2. Fill in the `{{PLACEHOLDERS}}` with answers from the general user interview questions.
+2. Replace the `{{PLACEHOLDERS}}` with answers from the general user interview questions.
 
 The content is written for AI, not humans. There is no need for verbose introductions or explanations.
 Keep this file as brief as possible to preserve tokens. Prefer keywords and enumeration over continuous text.
@@ -125,7 +125,7 @@ Use clear section headers and other Markdown formatting to demark connected aspe
 Perform these steps for **every** established sub-project:
 
 1. Copy the [template](./templates/sub-project-explorer-agent.md) to `<project-dir>/.claude/agents/<sub-project-slug>-explorer.md`
-2. Fill in the `{{PLACEHOLDERS}}` with known answers from the respective sub-project interview questions.
+2. Replace the `{{PLACEHOLDERS}}` with acquired context for the respective sub-project.
 3. Use a general purpose `Explore` agent to perform a more thorough exploration of the sub-project's code
    and add additional context information and instructions that are helpful to navigate the code structure
    as well as common conventions and nomenclature.
@@ -142,14 +142,14 @@ If any of the steps seem inapplicable to the given sub-project, skip them and no
 #### Case A: Sub-project with a dedicated root directory
 
 1. Copy the [template](./templates/sub-project-CLAUDE-template.md) to `<sub-project-path>/CLAUDE.md`
-2. Fill in the `{{PLACEHOLDERS}}` with known answers from the respective sub-project interview questions.
+2. Replace the `{{PLACEHOLDERS}}` with acquired context for the respective sub-project.
 3. For placeholders that do not have corresponding answers,
    ask the user whether they want to provide an answer, generate an answer from code exploration or omit the section.
 4. Create a `.claude/rules/` directory inside the sub-project root.
 5. For each programming language used in the sub-project, create a code style rule
    from the [template](./templates/rule-code-style.md) at `<sub-project-path>/.claude/rules/<language>-code-style.md`
     - The `paths` glob in the template uses `**/*.<ext>` — this is relative to the sub-project directory and is correct as-is.
-    - Fill in `{{PLACEHOLDERS}}` according to the aspects of the programming language.
+    - Replace the `{{PLACEHOLDERS}}` according to the aspects of the programming language.
     - Populate the style rules from linting tool configuration if discovered in Phase 1,
       or from conventions observed during code exploration.
 6. For each testing framework used in the sub-project, create a testing rule
@@ -167,13 +167,13 @@ All rules go under the **project root** `.claude/rules/<sub-project-slug>/` so t
 
 1. Copy the [template](./templates/sub-project-rule-template.md) to `<project-root>/.claude/rules/<sub-project-slug>/<sub-project-slug>-development.md`
 2. Set the `paths` frontmatter to the glob pattern established in interview question 5.
-3. Fill in the `{{PLACEHOLDERS}}` with known answers from the respective sub-project interview questions.
+3. Replace the `{{PLACEHOLDERS}}` with acquired context for the respective sub-project.
 4. For placeholders that do not have corresponding answers,
    ask the user whether they want to provide an answer, generate an answer from code exploration or omit the section.
 5. For each programming language used in the sub-project, create a code style rule
    from the [template](./templates/rule-code-style.md) at `<project-root>/.claude/rules/<sub-project-slug>/<language>-code-style.md`
     - Set the `paths` glob to the same pattern as in step 2 (or a narrowed variant, e.g. excluding test directories).
-    - Fill in `{{PLACEHOLDERS}}` according to the aspects of the programming language.
+    - Replace the `{{PLACEHOLDERS}}` according to the aspects of the programming language.
     - Populate the style rules from linting tool configuration or observed conventions.
 6. For each testing framework used in the sub-project, create a testing rule
    from the [template](./templates/rule-testing.md) at `<project-root>/.claude/rules/<sub-project-slug>/testing.md`

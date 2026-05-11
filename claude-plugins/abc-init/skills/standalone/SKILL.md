@@ -82,13 +82,13 @@ The purpose of the interview is to include tribal project knowledge not captured
 
 1. Copy the [settings template](./templates/settings-template.json) to `<project-dir>/.claude/settings.json`
 2. Copy the [statusline template](./templates/statusline.sh) to `<project-dir>/.claude/statusline.sh` and make it executable (`chmod +x`).
-3. Replace `{{PLACEHOLDERS}}` with answers from the user interview.
+3. Replace the `{{PLACEHOLDERS}}` based on acquired context.
 4. Inject `{{GITIGNORE-EXCLUSIONS}}` into the sandbox config, limiting write access to version-controlled files only.
 
 ### 3b — Central CLAUDE.md
 
 1. Copy the [template](./templates/CLAUDE-template.md) to `<project-dir>/CLAUDE.md`
-2. Fill in the `{{PLACEHOLDERS}}` with answers from the user interview.
+2. Replace the `{{PLACEHOLDERS}}` based on acquired context.
 3. For placeholders that do not have corresponding answers,
    ask the user whether they want to provide an answer, generate an answer from code exploration, or omit the section.
 
@@ -107,7 +107,7 @@ If a `.gitignore` file exists in the project root, append the following entries 
 ### 3d — Explorer Agent
 
 1. Copy the [template](./templates/explorer-agent.md) to `<project-dir>/.claude/agents/<project-slug>-explorer.md`
-2. Fill in the `{{PLACEHOLDERS}}` with known answers from the interview.
+2. Replace the `{{PLACEHOLDERS}}` based on acquired context.
 3. Use a general purpose `Explore` agent to perform a more thorough exploration of the project's code
    and add additional context information and instructions that are helpful to navigate the code structure
    as well as common conventions and nomenclature.
@@ -118,7 +118,7 @@ If a `.gitignore` file exists in the project root, append the following entries 
 1. Create a `.claude/rules/` directory in the project root.
 2. For each programming language used in the project, create a code style rule
    from the [template](./templates/rule-code-style.md) at `<project-dir>/.claude/rules/<language>-code-style.md`
-    - Fill in `{{PLACEHOLDERS}}` according to the aspects of the programming language.
+    - Replace the `{{PLACEHOLDERS}}` according to the aspects of the programming language.
     - Populate the style rules from linting tool configuration if discovered in Phase 1,
       or from conventions observed during code exploration.
 3. For each testing framework used in the project, create a testing rule
