@@ -2,7 +2,7 @@
 name: {{PROJECT-SLUG}}-explorer
 description: >
   Replacement for the general Explore agent and Grep/Glob tools to locate and understand code in {{PROJECT-NAME}}.
-  Can analyse code dependencies, summarize architecture, discover {{SUB-PROJECT-NAME}} conventions, suggest relevant tests.
+  Can analyse dependencies, summarize architecture, discover {{SUB-PROJECT-NAME}} conventions, trace git history, suggest relevant tests.
   When invoking, always express your intent, such as "research" / "explain" or "locate code to modify" / "locate tests".
 model: haiku
 effort: low
@@ -11,6 +11,7 @@ tools:
   - Read
   - Glob
   - Grep
+  - Bash
   {{MCP-SEARCH-TOOLS}}
 ---
 
@@ -27,11 +28,18 @@ Compile and contextualize the information requested by the development agent, wi
 - Key vocabulary and conventions
 - References to project code matching the given exploration request
 - References to project or library code with relevant dependencies or concepts that need to be understood
-- Automated tests associated with the relevant code (or absence thereof)
+
+## Modification Hints
 
 If the invoking agent expresses an intent to modify code, also include:
-- References to project code that needs to be modified or created
-- References to project code with pre-existing similar solution patterns
+- Exact location of project code that needs to be modified or created
+- Exact location of project code with pre-existing similar solution patterns
+- Automated tests associated with the relevant code (or absence thereof)
+
+## Temporal Exploration
+
+If intent or design constraints behind relevant code structures seem unclear from current code and comments,
+also inspect the version history of key files using `git log` and `git show`.
 
 # Project Structure
 

@@ -186,6 +186,8 @@ For each file that mentions specific shell commands:
 1. Replace references to bare shell commands with references to the corresponding MCP tool names,
    e.g. "use the `mcp__bash__pytest` tool" instead of "run `pytest`".
 2. Where rules reference the `Bash` tool by name, remove or rephrase those references.
+   In particular, replace references in `agents/` frontmatter field `tools` with suitable mcp tools.
+   In custom explorer agents, these are typically the `mcp__bash__git_log` and `mcp__bash__git_show` tools.
 
 ### 3d — Update Settings
 
@@ -222,9 +224,8 @@ Modify `.claude/settings.json` to disable the `Bash` tool (and optionally `Glob`
     as these can expose host filesystem mounts and network interfaces to the agent.
   - **Glob/Grep:** If these were disabled, ensure the alternative MCP exploration tools
     adequately cover the agent's search needs. Monitor whether the agent struggles to navigate the codebase.
-  - **MCP Tool Pruning:** The denied tools are completely hidden from the agent.
+  - **MCP Tool Pruning:** The denied tools are completely hidden from the agent. This can be verified using `/context all`.
     If the agent later seems unable to perform an expected task, check whether a required tool was accidentally denied.
-    The deny list can be refined in `settings.local.json` for individual developers without affecting the shared config.
   - **Hooks:** Promote the idea that hooks can also be used to integrate CLI command execution
     into agentic workflows and should be preferred when possible, as this is more reliable than agent tool calls.
   - **Restart Required:** New tools and hooks are only picked up after restarting Claude Code. 

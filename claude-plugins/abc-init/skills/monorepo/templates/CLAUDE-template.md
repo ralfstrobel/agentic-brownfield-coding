@@ -15,6 +15,10 @@ Dev environment is a monorepo with code from multiple dev teams.
 - {{SUB-PROJECT-NAME}} ({{SUB-PROJECT-KEY-TECHNOLOGIES}}): {{SUB-PROJECT-PURPOSE/FUNCTION}}
 - {{REPEAT FOR EACH SUB-PROJECT}}
 
+## Git Conventions
+
+{{DISCOVERED-COMMIT-MESSAGE-PATTERNS}}
+
 ## User Interaction
 
 You work in close collaboration with the user to handle the complexity of this software project.

@@ -48,9 +48,10 @@ Follow these principles to optimally tailor your instructions to their needs:
 
 ## Phase 1: Reconnaissance
 
-1. Use the `Explore` agent to scan the repository and build an initial understanding of its structure
+1. Use `Explore` agents to scan the repository and build an initial understanding of its structure
    - Top-level directory content that hints at used technologies (e.g. `package.json`, `composer.json`, `Cargo.toml`, `go.mod`, `Makefile`, `Dockerfile`)
    - Existing documentation (e.g. `README.md`, `CONTRIBUTING.md` or `docs/`)
+   - Style (e.g. imperative mood) and common patterns (e.g. ticket numbers) in commit messages from the `git log`. 
 2. Read any discovered documentation and technology manifest files
 3. Check for an existing `CLAUDE.md` or `.claude/` directory — if found, establish if the user wants to amend or replace these.
 4. Summarize your findings and conclusions briefly for the user and ask if they want to comment or add information.

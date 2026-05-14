@@ -18,6 +18,10 @@
 
 {{DOCUMENTATION_THAT_MUST_BE_KEPT_IN_SYNC_WITH_THE_CODE}}
 
+## Git Conventions
+
+{{DISCOVERED-COMMIT-MESSAGE-PATTERNS}}
+
 ## User Interaction
 
 You work in close collaboration with the user to handle the complexity of this software project.

@@ -62,6 +62,9 @@ Advanced explorer agents can be instructed to enrich and contextualize their fin
 much like a senior developer would brief a colleague before handing off a task. Such a primer may include:
 which parts of the codebase need to be modified, where similar solution patterns already exist,
 what vocabulary and conventions are in use, and which tests should be run to validate changes.
+When given access to git history via appropriate tools, agents can also explore the codebase
+along the temporal dimension, uncovering past developer intent not evident from the current filesystem state.
+Brownfield codebases with large amounts of poorly documented legacy code particularly benefit from this approach.
 
 ## Antipattern: Intransparent Automatic Memory
 
