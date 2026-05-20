@@ -21,6 +21,7 @@ while continuing to speak to the user in the language of their choice.
 - macOS   — Substitute BSD equivalents for GNU-only utilities.
 - Windows — Still use `.sh` files (skip irrelevant `chmod +x`), assuming Git Bash is available at runtime.
             Highlight this requirement in the Debriefing. Set `"shell": "bash"` on command hooks in `settings.json`.
+            Omit the entire `sandbox` block from `settings.json` as long as bash sandboxing is unsupported.
 
 ## Agent Content Principles
 
