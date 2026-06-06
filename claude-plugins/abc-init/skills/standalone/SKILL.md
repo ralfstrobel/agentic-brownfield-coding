@@ -104,6 +104,7 @@ If a `.gitignore` file exists in the project root, append the following entries 
 ```
 /CLAUDE.local.md
 /.claude/settings.local.json
+/.claude/plans/
 ```
 
 ### 3d — Explorer Agent
@@ -160,7 +161,9 @@ The project owner can fill in the correct code later.
 - Explain that this was a long agentic workflow and that agents can be prone to skipping steps.
   So the user should carefully test everything that was created and compare it against this skill document.
 - Explain that this is an initial scaffold, not a turnkey setup. Specifically:
-  - **Sandboxing:** The sandbox config in the settings is untested. Call `/sandbox` to review.
+  - **Settings:** The settings are intentionally restrictive and disable potentially confusing and expensive functions.
+    The user should review and re-endable these if explicitly desired by the project.
+  - **Sandboxing:** The sandbox settings are untested. Call `/sandbox` to review. Run `claude doctor` on startup issues.
     If the user is executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
   - **Status Line:** The `statusline.sh` script runs automatically every time Claude Code renders a prompt.
     Due to this fact it should be treated as particularly sensitive and protected from unwanted modification.

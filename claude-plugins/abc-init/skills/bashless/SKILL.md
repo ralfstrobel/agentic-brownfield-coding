@@ -193,18 +193,18 @@ For each file that mentions specific shell commands:
 
 Modify `.claude/settings.json` to disable the `Bash` tool (and optionally `Glob`/`Grep`) and prune MCP tools:
 
-1. Ensure `"enableAllProjectMcpServers": true` is present in the settings.
-2. Add `"mcp__bash__*"` to the `permissions.allow` array (create it if it does not exist).
-3. Add `"Bash"` to the `permissions.deny` array (create it if it does not exist).
+1. Add `"enableAllProjectMcpServers": true` at the root object level to enable the `.mcp.json` definitions.
+2. Add `"includeGitInstructions": false` at the root object level, since the MCP git tools bring their own instructions.
+3. Add `"mcp__bash__*"` to the `permissions.allow` array (create it if it does not exist).
+4. Add `"Bash"` to the `permissions.deny` array (create it if it does not exist).
    Also add `"PowerShell"` tool to deny list on Windows hosts.
-4. If the user chose to disable `Glob` and `Grep` in Phase 2c, also add `"Glob"` and `"Grep"` to `permissions.deny`.
-5. Add every MCP tool the user explicitly or implicitly chose to remove in Phase 2d to `permissions.deny`.
-   Use the wildcard pattern only if the user wants to exclude all tools from a server (e.g. `"mcp__<server>__*"`).
-   - Wildcard entries can only remove entire servers, pattern matching inside tool names is not supported.
-   - Deny entries always win over allow entries, so excluding an entire server but allowing individual tools is not possible.
-6. Add every MCP server as `"mcp__<server>__*"` to `permissions.allow` if it has a corresponding tool deny list.
-7. If the user chose to remove the sandbox block in Phase 2e, delete the entire `sandbox` key.
-8. If a `PreToolUse` or `PostToolUse` hook references `Bash` in its matcher, notify the user that this is now obsolete.
+5. If the user chose to disable `Glob` and `Grep` in Phase 2c, also add `"Glob"` and `"Grep"` to `permissions.deny`.
+6. Add every MCP tool the user explicitly or implicitly chose to remove in Phase 2d to `permissions.deny`.
+   Wildcard patterns can be used to exclude all tools from a server (e.g. `"mcp__<server>__*"`)
+   as well as certain namespaced tool groups within a server (`"mcp__<server>__<group>_*"`).
+7. Add every MCP server as `"mcp__<server>__*"` to `permissions.allow` if it has a corresponding tool deny list.
+8. If the user chose to remove the sandbox block in Phase 2e, delete the entire `sandbox` key.
+9. If a `PreToolUse` or `PostToolUse` hook references `Bash` in its matcher, notify the user that this is now obsolete.
 
 ## Phase 4: Debriefing & Disclaimers
 
