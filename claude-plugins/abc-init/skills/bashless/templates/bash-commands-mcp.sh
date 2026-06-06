@@ -42,7 +42,7 @@ run_local() {
 TOOLS_JSON='[
   {
     "name": "git_status",
-    "description": "Read the git working tree status. Lists modified, added, deleted, renamed, untracked files.",
+    "description": "Read the git working tree status. Lists tracked changes: modified, added, deleted, renamed files (untracked files are excluded).",
     "inputSchema": { "type": "object", "properties": {} }
   },
   {
@@ -198,7 +198,7 @@ handle_tool_call() {
   case "$tool_name" in
 
     git_status)
-      cmd_output=$(run_local git -P status -sbu) || exit_code=$?
+      cmd_output=$(run_local git -P status -sb -uno) || exit_code=$?
       ;;
 
     git_log)
