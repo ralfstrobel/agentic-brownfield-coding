@@ -8,6 +8,10 @@ set -f  # disable glob expansion to prevent argument injection
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Circuit breaker for oversized results. Tools that emit large output (verbose
+# logs, full config/data dumps) would otherwise flood the agent's context.
+MAX_RESULT_BYTES=25000
+
 # ---------------------------------------------------------------------------
 # Command execution wrappers
 # Adjust/amend this section to match your project's execution environment(s).
@@ -17,6 +21,18 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 run_local() {
   cd "$PROJECT_ROOT" && "$@" 2>&1
 }
+
+# Serialized variant for tools that touch shared resources such as test databases.
+# flock guards a lock file so concurrent agent calls cannot run the command at the same time.
+# run_local_mutex() {
+#   cd "$PROJECT_ROOT" && flock -w 1800 "/tmp/mcp-bash-tool-call.lock" "$@" 2>&1
+# }
+
+# Example for running commands inside a Docker Compose service instead of directly on the host:
+# run_docker() {
+#   # --progress quiet suppresses the "Container ... Creating/Created" noise on stderr
+#   cd "$PROJECT_ROOT" && docker compose --progress quiet run --rm -T {{SERVICE}} "$@" 2>&1 </dev/null
+# }
 
 # Important: Use a sandbox approach for executing arbitrary commands with potential security risks.
 # Example for a simple read-only no-network sandbox using bubblewrap under Linux:
@@ -310,6 +326,19 @@ handle_tool_call() {
   if [[ "$exit_code" -ne 0 ]]; then
     is_error="true"
     cmd_output="Exit code: $exit_code"$'\n'"$cmd_output"
+  elif [[ -z "${cmd_output//[$' \t\r\n']/}" ]]; then
+    # Some commands are silent on success.
+    # Return an explicit confirmation so the agent is not confused by empty output.
+    cmd_output="Done."
+  fi
+
+  # Truncate oversized results to a readable head and flag as error, prompting a narrower request.
+  local byte_count
+  byte_count=$(printf '%s' "$cmd_output" | wc -c)
+  if (( byte_count > MAX_RESULT_BYTES )); then
+    is_error="true"
+    # iconv -c drops a partial multi-byte char left dangling by the byte-wise head cut.
+    cmd_output="$(printf '%s' "$cmd_output" | head -c "$MAX_RESULT_BYTES" | iconv -f UTF-8 -t UTF-8 -c)"$'\n\n'"[Result of $byte_count bytes exceeds the $MAX_RESULT_BYTES-byte limit; only the leading portion is shown above. Consider narrowing the request to obtain complete output — e.g. a more specific filter, file or target.]"
   fi
 
   send_response "$id" "$(jq -cn --arg text "$cmd_output" --argjson isError "$is_error" \
