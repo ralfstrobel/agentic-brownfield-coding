@@ -155,7 +155,7 @@ fi
 
 # ---------------------------------------------------------------------------
 # Phase 4: Tests pass. Emit a self-review reminder so the agent confirms that
-# new code paths are actually covered, or proposes manual verification steps.
+# new code paths are actually covered by the tests that ran.
 # ---------------------------------------------------------------------------
 REMINDER=""
 append_reminder() {
@@ -166,41 +166,49 @@ append_reminder() {
 }
 
 # $1: human-readable kind label (e.g. "TypeScript")
-# $2: count of modified source files in this kind
-# $3..: test identifiers that were executed for this kind (may be empty)
+# $2..: test identifiers that were executed for this kind
 append_test_coverage_reminder() {
     local KIND="$1"
-    local SOURCE_COUNT="$2"
-    shift 2
+    shift
     local TESTS=("$@")
-    [ "$SOURCE_COUNT" -eq 0 ] && [ ${#TESTS[@]} -eq 0 ] && return
+    [ ${#TESTS[@]} -eq 0 ] && return
 
-    if [ ${#TESTS[@]} -gt 0 ]; then
-        local TEST_LIST=""
-        for T in "${TESTS[@]}"; do
-            TEST_LIST="$TEST_LIST"$'\n'"  - $T"
-        done
-        append_reminder "
+    local TEST_LIST=""
+    for T in "${TESTS[@]}"; do
+        TEST_LIST="$TEST_LIST"$'\n'"  - $T"
+    done
+    append_reminder "
 === Automated $KIND Test Coverage Reminder ===
 The following associated tests ran without failures:$TEST_LIST
 Confirm that all new code paths you introduced are covered exhaustively by assertions. If not, amend the tests now."
-    else
-        append_reminder "
-=== Automated Verification Reminder ===
-You modified $KIND files with no associated unit tests. Verify your changes by one of these methods:
-- Add a new unit test, if appropriate according to the team's testing rules.
-- Locate, amend and run integration/behavioral tests relevant to your changes.
-- Execute relevant code paths yourself using tool calls.
-- Inform the user of required steps for manual verification."
-    fi
 }
 
-# Emit one coverage reminder per kind that was touched this turn.
+# Emit one coverage reminder per kind whose tests ran this turn.
 #
 # Example:
-#   append_test_coverage_reminder "TypeScript" "${#TS_SOURCE_FILES[@]}" "${!JEST_FILES[@]}"
+#   append_test_coverage_reminder "TypeScript" "${!JEST_FILES[@]}"
 
 {{COVERAGE-REMINDERS}}
+
+# Optionally, remind about modified test artifacts that are NOT auto-run here
+# (e.g. slow behavioral/E2E suites such as Behat/Cypress).
+# Collect these in a separate array in Phase 1.
+# These get a reminder-only nudge — no execution — when their files were touched this turn.
+#
+# Example:
+#   if [ ${#FEATURE_FILES[@]} -gt 0 ]; then
+#       FEATURE_LIST=""
+#       for F in "${FEATURE_FILES[@]}"; do
+#           FEATURE_LIST="$FEATURE_LIST"$'\n'"  - $F"
+#       done
+#       append_reminder "
+# === Automated Behavioral Test Reminder ===
+# You modified behavioral test files:$FEATURE_LIST
+# These tests do not run automatically.
+# Confirm that all relevant code paths are covered exhaustively by scenarios. If not, amend the tests now."
+#   fi
+
+{{NON-RUNNABLE-TEST-REMINDERS}}
 
 if [ -n "$REMINDER" ]; then
     extend_agent_turn "$REMINDER"
