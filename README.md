@@ -42,7 +42,7 @@ claude plugin install abc@agentic-brownfield-coding
 claude plugin uninstall abc-init@agentic-brownfield-coding
 claude plugin uninstall abc@agentic-brownfield-coding
 
-claude plugin marketplace remove ralfstrobel/agentic-brownfield-coding
+claude plugin marketplace remove agentic-brownfield-coding
 ```
 
 ## Usage
