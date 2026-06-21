@@ -23,7 +23,7 @@
         "DISABLE_FEEDBACK_COMMAND": "1",
         "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
         "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
-        "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75"
+        "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50"
     },
     "statusLine": {
         "type": "command",
@@ -31,7 +31,13 @@
     },
     "permissions": {
         "allow": [
+            "WebSearch",
+            "WebFetch",
             "Edit({{SUB-PROJECT-PATH}}/**)"
+        ],
+        "deny": [
+            "EnterWorktree",
+            "ExitWorktree"
         ]
     },
     "sandbox": {
