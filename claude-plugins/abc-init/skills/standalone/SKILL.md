@@ -37,7 +37,7 @@ Follow these principles to optimally tailor your instructions to their needs:
 - **Scoped**      — Context is hierarchical. The CLAUDE.md must only contain core project identity and semantics.
                     Rules and agent instructions progressively disclose domain- and task-specific knowledge.
 - **Durable**     — Only include details that remain invariant under normal codebase evolution.
-                    Avoid specific technology versions. Reference namespaces or search terms instead of single artifacts.
+                    Reference namespaces or search terms instead of single artifacts.
 
 # Workflow
 
@@ -94,10 +94,6 @@ The purpose of the interview is to include tribal project knowledge not captured
 2. Replace the `{{PLACEHOLDERS}}` based on acquired context.
 3. For placeholders that do not have corresponding answers,
    ask the user whether they want to provide an answer, generate an answer from code exploration, or omit the section.
-
-The content is written for AI, not humans. There is no need for verbose introductions or explanations.
-Keep this file as brief as possible to preserve tokens. Prefer keywords and enumeration over continuous text.
-Use clear section headers and other Markdown formatting to demark connected aspects.
 
 ### 3c — Local Override Files
 
@@ -170,7 +166,18 @@ The project owner can fill in the correct code later.
 3. Tailor the `append_test_coverage_reminder` strings to the project's review/testing culture;
    optionally add further conditional `append_reminder` calls for project-specific code change concerns.
 
-## Phase 4: Debriefing & Disclaimers
+## Phase 4: Prune Verbosity
+
+Avoiding overly specific instructions is crucial for agents to work focused and with low perplexity.
+Re-read every written `.md` file and delete content that matches one of these criteria:
+
+- Fails the grep test: an agent could find this trivially with a single-fact code search.
+- Enumerates values that can be read from a referencable source (enums, constants or mapping files).
+- Names a specific technology version or other codebase fact that will quickly become stale.
+- Explains what an available tool does or when to use it — tool descriptions already cover this.
+- Duplicates content that exists in another generated file (e.g. `CLAUDE.md` vs. `rules/`).
+
+## Phase 5: Debriefing & Disclaimers
 
 - Present a summary table of everything created (file path, artifact type, purpose).
 - Explain that this was a long agentic workflow and that agents can be prone to skipping steps.

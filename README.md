@@ -49,7 +49,7 @@ claude plugin marketplace remove agentic-brownfield-coding
 
 ### Scaffolding
 
-These commands should be run using Opus as they require complex code base reasoning.
+These commands should be run using Fable or Opus as they require complex codebase reasoning.
 
 - [`/abc-init:standalone`](claude-plugins/abc-init/skills/standalone/SKILL.md) – Create initial Claude Code artifacts for single-application projects.
 - [`/abc-init:monorepo`](claude-plugins/abc-init/skills/monorepo/SKILL.md) – Create initial Claude Code artifacts for monorepo projects (multiple sub-projects/teams).
@@ -67,10 +67,11 @@ These commands should be run using Opus as they require complex code base reason
 > that run automatically as part of the Claude Code harness — review and safeguard these files against manipulation!
 
 > [!NOTE]
-> The scaffolding result is not a turnkey solution and requires thorough testing for every new codebase.
-> As even frontier models sometimes struggle to follow long workflows,
+> The scaffolding result is **not a turnkey solution** and requires thorough testing for every new codebase.
+> As even frontier models sometimes struggle to follow long workflows faithfully,
 > you may want to read the skill yourself and compare it against your output.
-> Agent instructions produced by agents are notoriously too verbose and often need to be condensed.
+> Content produced by LLMs is also **notoriously verbose**, despite my best efforts to prompt for terse wording.
+> I recommend treating any prose output as suggestions and condensing it by hand to what you find relevant.
 
 ### Workflows
 
