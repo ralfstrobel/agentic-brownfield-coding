@@ -50,9 +50,10 @@ Follow these principles to optimally tailor your instructions to their needs:
 ## Phase 1: Reconnaissance
 
 1. Use `Explore` agents to scan the repository and build an initial understanding of its structure
+   - Number of source files, excluding dependency and build directories (e.g. `vendor/`, `node_modules/`, `dist/`).
    - Top-level directory content that hints at used technologies (e.g. `package.json`, `composer.json`, `Cargo.toml`, `go.mod`, `Makefile`, `Dockerfile`)
    - Existing documentation (e.g. `README.md`, `CONTRIBUTING.md` or `docs/`)
-   - Style (e.g. imperative mood) and common patterns (e.g. ticket numbers) in commit messages from the `git log`. 
+   - Style (e.g. imperative mood) and common patterns (e.g. ticket numbers) in commit messages from the `git log`.
 2. Read any discovered documentation and technology manifest files
 3. Check for an existing `CLAUDE.md` or `.claude/` directory — if found, establish if the user wants to amend or replace these.
 4. Summarize your findings and conclusions briefly for the user and ask if they want to comment or add information.
@@ -107,7 +108,21 @@ If a `.gitignore` file exists in the project root, append the following entries 
 /.claude/plans/
 ```
 
-### 3d — Explorer Agent
+### 3d — Code Navigation
+
+The approach depends on the source file count established in Phase 1.
+A dedicated explorer agent only pays off in codebases with more than a hundred source files.
+
+#### Case A: Small codebase
+
+1. Integrate the `Project Structure` section of the [agent template](./templates/explorer-agent.md)
+   directly into the central `CLAUDE.md` (as a `##` section after concepts and vocabulary).
+2. Replace its `{{PLACEHOLDERS}}` based on acquired context.
+   Describe each directory's responsibility in a half-sentence.
+3. Remove the unfitting codebase size statement and explorer agent recommendation from `CLAUDE.md`.
+   Delete the navigation section entirely if no actionable content remains.
+
+#### Case B: Large codebase
 
 1. Copy the [template](./templates/explorer-agent.md) to `<project-dir>/.claude/agents/<project-slug>-explorer.md`
 2. Replace the `{{PLACEHOLDERS}}` based on acquired context.
@@ -162,12 +177,12 @@ The project owner can fill in the correct code later.
   So the user should carefully test everything that was created and compare it against this skill document.
 - Explain that this is an initial scaffold, not a turnkey setup. Specifically:
   - **Settings:** The settings are intentionally restrictive and disable potentially confusing and expensive functions.
-    The user should review and re-endable these if explicitly desired by the project.
+    The user should review and re-enable these if explicitly desired by the project.
   - **Sandboxing:** The sandbox settings are untested. Call `/sandbox` to review. Run `claude doctor` on startup issues.
     If the user is executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
   - **Status Line:** The `statusline.sh` script runs automatically every time Claude Code renders a prompt.
     Due to this fact it should be treated as particularly sensitive and protected from unwanted modification.
-  - **Explorer Agents:** The generated agent contains only minimal structural knowledge.
+  - **Explorer Agents (if created):** The generated agent contains only minimal structural knowledge.
     Developers should refine known directories and output format until it reliably returns useful context.
   - **Quality Gate Hooks:** The generated commands and test-file discovery logic may be incorrect.
     Trigger both hooks via a few manual edits and a full agent turn (modifying source and test files),

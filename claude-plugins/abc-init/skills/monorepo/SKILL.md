@@ -214,7 +214,7 @@ The project owner can extend the hooks later.
   So the user should carefully test everything that was created and compare it against this skill document.
 - Explain that this is an initial scaffold, not a turnkey setup. Specifically:
   - **Settings:** The settings are intentionally restrictive and disable potentially confusing and expensive functions.
-    The user should review and re-endable these if explicitly desired by the project.
+    The user should review and re-enable these if explicitly desired by the project.
   - **Sandboxing:** The sandbox settings are untested. Call `/sandbox` to review. Run `claude doctor` on startup issues.
     If the user is executing Claude Code in an isolated environment such as a container, sandboxing may not be required.
   - **Status Line:** The `statusline.sh` script runs automatically every time Claude Code renders a prompt.

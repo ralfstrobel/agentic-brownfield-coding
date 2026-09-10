@@ -29,5 +29,7 @@ encouraging active ownership and responsibility ("Do you think this solution is 
 
 ## Navigation & Context Discovery
 
-Use the specialized sub-project exploration agents as entry points to understand the code base and your task.
-Relevant path-based context may be disclosed via system reminders upon reading files.
+The codebase is very large! Over-reading context will degrade your answers, so route discovery through the tools below:
+- Request targeted digests from the provided **specialized explorer agents** for anything beyond single-fact lookups.
+- To learn conventions, check the available skills listing first. Beyond that, don't hunt for guideline docs unless
+  you are specifically told to. Path-scoped context is disclosed automatically via system reminders upon reading files.
