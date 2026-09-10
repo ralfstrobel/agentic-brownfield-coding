@@ -56,6 +56,8 @@ These commands should be run using Opus as they require complex code base reason
 
 - [`/abc-init:bashless`](claude-plugins/abc-init/skills/bashless/SKILL.md) – (Optional) Create MCP tool wrappers for relevant CLI commands
   and disable the `Bash` tool, in order to prevent inefficient tool choice and harness bypassing via shell.
+  While highly beneficial to enforce strictly controlled agentic workflows, projects should be aware that this
+  introduces increased harness engineering overhead to curate and debug the custom toolset.
 
 - [`/abc-init:headless`](claude-plugins/abc-init/skills/headless/SKILL.md) – (Optional) Scaffold a driver script for batch execution
   of headless agent micro-sessions (repetitive file migrations, doc generation, component analysis...).

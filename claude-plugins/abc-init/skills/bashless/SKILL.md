@@ -146,7 +146,7 @@ Check whether the current `.claude/settings.json` contains a `sandbox` configura
      Document this decision with an inline comment.
 4. The template already contains working implementations of the git read tools.
    Based on the git permission level chosen in Phase 2a, uncomment the corresponding write tools:
-   - **Commit:** Uncomment `git_add` and `git_commit` in both the tool definitions and the handler.
+   - **Commit:** Uncomment `git_commit` in both the tool definitions and the handler.
    - **Full:** Also uncomment `git_push`.
 5. Replace `{{TOOL-DEFINITIONS}}` with JSON tool entries for the project-specific CLI tools confirmed in Phase 2b.
    Use the commented project tool example in the template as a guide.

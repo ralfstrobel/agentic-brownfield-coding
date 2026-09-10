@@ -15,10 +15,10 @@ cd "$REPO_ROOT"
 
 REL_FILE="${FILE#"$REPO_ROOT"/}"
 
-# Automatically try to add created files to the git index
+# Register created files with the git index so they are visible to diff/status/mv/rm.
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
 if [ "$TOOL_NAME" = "Write" ]; then
-    git -C "$REPO_ROOT" add -- "$REL_FILE" 2>/dev/null || true
+    git -C "$REPO_ROOT" add -N -- "$REL_FILE" 2>/dev/null || true
 fi
 
 RESULTS=""
