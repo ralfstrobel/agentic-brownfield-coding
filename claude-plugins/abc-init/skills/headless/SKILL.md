@@ -14,8 +14,8 @@ a driver script (`*.sh`) with a system prompt file (`*.md`) and potentially an i
 
 **Additional user arguments**: $ARGUMENTS
 
-**Language hint**: Always create all generated script content and comments in English,
-while continuing to speak to the user in the language of their choice.
+**Language hint**: Always create all generated script content and comments in English
+for consistency across the codebase, while continuing to speak to the user in the language of their choice.
 
 **Platform hint**: Instructions and templates assume a Linux host with GNU coreutils. Adapt to the detected user OS.
 - macOS   — Substitute BSD equivalents for GNU-only utilities.

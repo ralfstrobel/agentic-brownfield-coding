@@ -15,8 +15,8 @@ rather than being attracted to unstructured shell access.
 
 **Additional user arguments**: $ARGUMENTS
 
-**Language hint**: Always create all generated script content and comments in English,
-while continuing to speak to the user in the language of their choice.
+**Language hint**: Always create all generated script content and comments in English
+for consistency across the codebase, while continuing to speak to the user in the language of their choice.
 
 **Platform hint**: Instructions and templates assume a Linux host with GNU coreutils. Adapt to the detected user OS.
 - macOS   — Substitute BSD equivalents for GNU-only utilities.
@@ -26,11 +26,9 @@ while continuing to speak to the user in the language of their choice.
 
 # Workflow
 
-1. Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool.
-   Create a task for each of the following phases (##) and sub-phases (###).
-   Do not duplicate the contents in the description, only reference this skill (`abc-init:bashless`) and the workflow item.
-2. Create a dependency chain between all tasks using `TaskUpdate`, setting `addBlockedBy` to the predecessor task.
-3. Work through the `TaskList` using `TaskUpdate` to mark tasks as in_progress and completed as you go.
+Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool (if available).
+Create a task for each of the following phases (##) and sub-phases (###).
+This protects you from accidentally skipping phases and visualizes the progress for the user.
 
 ## Phase 1: Reconnaissance
 
@@ -51,7 +49,7 @@ Pay special attention to the following aspects:
 - **Build tools** — Are builds executed manually and if so how (e.g. `make`, `npm run build`, `cargo build`)
 - **Framework CLIs** — Project-specific console commands (e.g. `artisan`, `manage.py`, `nx`, `laravel`/`symfony`)
 
-Use `TaskCreate` and `TaskUpdate` to add additional blocking tasks for files that need to be updated in Phase 3c below.
+Use `TaskCreate` to add a task for each file that needs to be updated in Phase 3c below, so none is forgotten.
 
 ### 1b — MCP Tools
 
@@ -203,6 +201,7 @@ Modify `.claude/settings.json` to disable the `Bash` tool (and optionally `Glob`
    Wildcard patterns can be used to exclude all tools from a server (e.g. `"mcp__<server>__*"`)
    as well as certain namespaced tool groups within a server (`"mcp__<server>__<group>_*"`).
 7. Add every MCP server as `"mcp__<server>__*"` to `permissions.allow` if it has a corresponding tool deny list.
+   Deny rules are evaluated first, so this yields exactly the pruned tool set without per-call prompts for the rest.
 8. If the user chose to remove the sandbox block in Phase 2e, delete the entire `sandbox` key.
 9. If a `PreToolUse` or `PostToolUse` hook references `Bash` in its matcher, notify the user that this is now obsolete.
 

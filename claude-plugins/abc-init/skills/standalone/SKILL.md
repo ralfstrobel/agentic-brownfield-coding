@@ -14,7 +14,7 @@ to obtain the required base knowledge about the goals and structure of the proje
 
 **Additional user arguments**: $ARGUMENTS
 
-**Language hint**: Always create all generated document content in English,
+**Language hint**: Always create all generated document content in English for consistency across the codebase,
 while continuing to speak to the user in the language of their choice.
 
 **Platform hint**: Instructions and templates assume a Linux host with GNU coreutils. Adapt to the detected user OS.
@@ -30,7 +30,7 @@ Follow these principles to optimally tailor your instructions to their needs:
 
 - **Concise**     — Minimize token usage. Prefer keywords and terse bullet points over prose.
 - **Structured**  — Use compact Markdown to delineate connected aspects.
-- **Actionable**  — Generate concrete operational directives, not abstract guidelines.
+- **Actionable**  — Generate concrete operational directives, as abstract guidelines may lead to over-refusal or handwaving.
                     Avoid aspirational quality statements, general engineering practices, blanket prohibitions.
 - **Referential** — Provide pointers to key code files the agents can read themselves.
                     Do not describe how code works in agent instructions as such duplication leads to drift.
@@ -41,11 +41,9 @@ Follow these principles to optimally tailor your instructions to their needs:
 
 # Workflow
 
-1. Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool.
-   Create a task for each of the following phases (##) and sub-phases (###).
-   Do not duplicate the contents in the description, only reference this skill (`abc-init:standalone`) and the workflow item.
-2. Create a dependency chain between all tasks using `TaskUpdate`, setting `addBlockedBy` to the predecessor task.
-3. Work through the `TaskList` using `TaskUpdate` to mark tasks as in_progress and completed as you go.
+Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool (if available).
+Create a task for each of the following phases (##) and sub-phases (###).
+This protects you from accidentally skipping phases and visualizes the progress for the user.
 
 ## Phase 1: Reconnaissance
 
@@ -122,12 +120,12 @@ A dedicated explorer agent only pays off in codebases with more than a hundred s
 
 1. Copy the [template](./templates/explorer-agent.md) to `<project-dir>/.claude/agents/<project-slug>-explorer.md`
 2. Replace the `{{PLACEHOLDERS}}` based on acquired context.
-   Add available `{{MCP-SEARCH-TOOLS}}` for read-only exploration.
-   Omit the native `Glob` and `Grep` tools if suitable MCP replacements are present.
+   Add available `{{MCP-SEARCH-TOOLS}}` for read-only exploration (except for those redundant to native `Glob` and `Grep`).
 3. Use a general purpose `Explore` agent to perform a more thorough exploration of the project's code
    and add additional context information and instructions that are helpful to navigate the code structure
    as well as common conventions and nomenclature.
-4. Modify `.claude/settings.json`, add `"Agent(Explore)"` to the `permissions.deny` array (create it if it does not exist).
+4. Modify `.claude/settings.json`, add `"Agent(Explore)"` to the `permissions.deny` array (create it if it does not exist),
+   so the agents cannot accidentally default to the generic agent not carrying the project structure knowledge.
 
 ### 3e — Rules
 
@@ -157,12 +155,12 @@ The project owner can fill in the correct code later.
 #### Post-Edit hook
 
 1. Copy the [template](./templates/post-edit-hook.sh) to `<project-dir>/.claude/hooks/post-edit.sh` and `chmod +x`.
-2. Replace `{{FILE-TYPE-CASES}}` with dispatching logic using the linting/formatting tools from Q8.
+2. Replace `{{FILE-TYPE-CASES}}` with dispatching logic using the linting/formatting tools from Q9.
 
 #### Stop hook
 
 1. Copy the [template](./templates/stop-hook.sh) to `<project-dir>/.claude/hooks/stop.sh` and `chmod +x`.
-2. Replace the placeholders using the test framework from Q7 and conventions from Phase 1.
+2. Replace the placeholders using the test framework from Q8 and conventions from Phase 1.
 3. Tailor the `append_test_coverage_reminder` strings to the project's review/testing culture;
    optionally add further conditional `append_reminder` calls for project-specific code change concerns.
 

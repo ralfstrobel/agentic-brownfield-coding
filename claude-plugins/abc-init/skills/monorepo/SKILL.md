@@ -14,7 +14,7 @@ to obtain the required base knowledge about the goals and structure of the proje
 
 **Additional user arguments**: $ARGUMENTS
 
-**Language hint**: Always create all generated document content in English,
+**Language hint**: Always create all generated document content in English for consistency across the codebase,
 while continuing to speak to the user in the language of their choice.
 
 **Platform hint**: Instructions and templates assume a Linux host with GNU coreutils. Adapt to the detected user OS.
@@ -30,7 +30,7 @@ Follow these principles to optimally tailor your instructions to their needs:
 
 - **Concise**     — Minimize token usage. Prefer keywords and terse bullet points over prose.
 - **Structured**  — Use compact Markdown to delineate connected aspects.
-- **Actionable**  — Generate concrete operational directives, not abstract guidelines.
+- **Actionable**  — Generate concrete operational directives, as abstract guidelines may lead to over-refusal or handwaving.
                     Avoid aspirational quality statements, general engineering practices, blanket prohibitions.
 - **Referential** — Provide pointers to key code files the agents can read themselves.
                     Do not describe how code works in agent instructions as such duplication leads to drift.
@@ -42,11 +42,9 @@ Follow these principles to optimally tailor your instructions to their needs:
 
 # Workflow
 
-1. Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool.
-   Create a task for each of the following phases (##) and sub-phases (###).
-   Do not duplicate the contents in the description, only reference this skill (`abc-init:monorepo`) and the workflow item.
-2. Create a dependency chain between all tasks using `TaskUpdate`, setting `addBlockedBy` to the predecessor task.
-3. Work through the `TaskList` using `TaskUpdate` to mark tasks as in_progress and completed as you go.
+Begin execution by creating a formal task list for progress tracking using the `TaskCreate` tool (if available).
+Create a task for each of the following phases (##) and sub-phases (###).
+This protects you from accidentally skipping phases and visualizes the progress for the user.
 
 ## Phase 1: Reconnaissance
 
@@ -79,7 +77,7 @@ The purpose of the interview is to include tribal project knowledge not captured
 
 ### Sub-Project Question Catalogue
 
-Go through **every** sub-project established in general question 6 and repeat these questions for each of them.
+Go through **every** sub-project established in general question 7 and repeat these questions for each of them.
 
 1. What is the name of the sub-project or the development team (e.g. "backend" / "frontend")?
    (If the name is more than one word, also establish a short slug to use in generated files.)
@@ -125,14 +123,14 @@ Perform these steps for **every** established sub-project:
 
 1. Copy the [template](./templates/sub-project-explorer-agent.md) to `<project-dir>/.claude/agents/<sub-project-slug>-explorer.md`
 2. Replace the `{{PLACEHOLDERS}}` with acquired context for the respective sub-project.
-   Add available `{{MCP-SEARCH-TOOLS}}` for read-only exploration.
-   Omit the native `Glob` and `Grep` tools if suitable MCP replacements are present.
+   Add available `{{MCP-SEARCH-TOOLS}}` for read-only exploration (except for those redundant to native `Glob` and `Grep`).
 3. Use a general purpose `Explore` agent to perform a more thorough exploration of the sub-project's code
    and add additional context information and instructions that are helpful to navigate the code structure
    as well as common conventions and nomenclature.
 
 After creation of all explorer agents, modify `.claude/settings.json`:
-- Add `"Agent(Explore)"` to the `permissions.deny` array (create it if it does not exist).
+- Add `"Agent(Explore)"` to the `permissions.deny` array (create it if it does not exist),
+  so the agents cannot accidentally default to the generic agent not carrying the sub-project structure knowledge.
 
 ### 3e — Sub-Project Context Rules
 
