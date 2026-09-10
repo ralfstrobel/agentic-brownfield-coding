@@ -15,9 +15,11 @@ CLAUDE_ARGS=(
   --model sonnet                                       # override default model (sonnet|opus|haiku)
   --effort low                                         # reasoning budget per turn
   --tools "Glob,Grep,Read,Write,Edit"                  # fixed list of tools available to model
+#  --restricted                                         # predefined restricted mode (no settings, no Bash/WebFetch)
 #  --allowedTools "..."                                 # whitelist of tool uses that are auto-allowed
 #  --disallowedTools "..."                              # blacklist of tool uses that are auto-denied
   --permission-mode dontAsk                            # auto-deny tool use not approved via settings or allowed-tools
+  --permission-prompts none                            # disable all interactive prompts and tools
   --max-turns 50                                       # cap agent actions per file (safety net against logic loops)
   --no-session-persistence                             # don't pollute --resume history
   --strict-mcp-config --mcp-config '{"mcpServers":{}}' # disable all MCP servers
