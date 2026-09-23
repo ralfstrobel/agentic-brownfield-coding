@@ -113,6 +113,19 @@ TOOLS_JSON='[
     }
   },
   {
+    "name": "git_blame",
+    "description": "Attribute a line range of one file from the current working-tree to the commits that last changed each line, including its date and subject. Output is one line per run of consecutive lines from the same commit or uncommitted state. File content is not included, as line numbers are those of the file as Read.",
+    "inputSchema": {
+      "type": "object",
+      "required": ["file", "start_line", "end_line"],
+      "properties": {
+        "file":       { "type": "string",  "description": "Path to the file, relative to the project root." },
+        "start_line": { "type": "integer", "description": "First line of the range (1-based, inclusive)." },
+        "end_line":   { "type": "integer", "description": "Last line of the range (inclusive). The range may span at most 200 lines." }
+      }
+    }
+  },
+  {
     "name": "git_rm",
     "description": "Delete a file or directory within the git working tree and also remove it from the index.",
     "inputSchema": {
@@ -317,6 +330,66 @@ handle_tool_call() {
       # probing the trees for which one it is.
       if [[ "$exit_code" -eq 0 && -z "${cmd_output//[$' \t\r\n']/}" ]]; then
         cmd_output="No differences. Note that a path matching no tracked file yields the same empty result, so verify \"$file\" is complete and correct if you expected changes."
+      fi
+      ;;
+
+    git_blame)
+      local file start_line end_line
+      file=$(echo "$arguments"       | jq -r '.file // ""')
+      start_line=$(echo "$arguments" | jq -r '.start_line // ""')
+      end_line=$(echo "$arguments"   | jq -r '.end_line // ""')
+      if [[ -z "$file" ]]; then
+        send_error "$id" -32602 "Missing required parameter: file"
+        return
+      fi
+      # Digits only: the values are spliced into "-L start,end", so anything else would
+      # either be a git option or a malformed range with an unhelpful error.
+      if [[ ! "$start_line" =~ ^[0-9]+$ || ! "$end_line" =~ ^[0-9]+$ || "$start_line" -lt 1 || "$end_line" -lt "$start_line" ]]; then
+        send_error "$id" -32602 "start_line and end_line must be positive integers with start_line <= end_line (got \"$start_line\", \"$end_line\")."
+        return
+      fi
+      # The cap is the tool's bound: output grows with attribution fragmentation, and even the
+      # worst case (every line from a different commit) stays far below MAX_RESULT_BYTES.
+      if (( end_line - start_line + 1 > 200 )); then
+        send_error "$id" -32602 "The range may span at most 200 lines (requested $(( end_line - start_line + 1 )))."
+        return
+      fi
+      # -w ignores whitespace-only changes and -M follows lines moved within the file, so
+      # reformatting and reordering commits do not swallow the attribution that matters.
+      # Working tree only (no revision argument): line numbers then match the file as the
+      # agent Read it, and uncommitted edits surface as such instead of hiding behind HEAD.
+      # Note that a range starting inside the file but ending past its end is clamped silently
+      # by git; only a start line past the end fails.
+      local porcelain
+      porcelain=$(run_git blame --porcelain -w -M -L "${start_line},${end_line}" -- "$file") || exit_code=$?
+      if [[ "$exit_code" -eq 0 ]]; then
+        # Porcelain gives each line's full hash (in file order) and, once per commit, its
+        # author-time and "summary" — already the first message line, so no truncation needed.
+        # Consecutive lines sharing a hash collapse into one "from-to" row.
+        # Requires perl (for strftime); it is the only tool in this template that does.
+        # shellcheck disable=SC2016  # perl variables, not shell expansions
+        local perl_shape='
+          my (%time, %subj, @rows, $h);
+          while (<STDIN>) {
+            if    (/^([0-9a-f]{40}) \d+ (\d+)/) { $h = $1; push @rows, [$2, $h]; }
+            elsif (/^author-time (\d+)/)        { $time{$h} = $1; }
+            elsif (/^summary (.*)/)             { $subj{$h} = $1; }
+          }
+          my @runs;
+          for my $r (@rows) {
+            if (@runs && $runs[-1][2] eq $r->[1] && $runs[-1][1] == $r->[0] - 1) { $runs[-1][1] = $r->[0]; }
+            else { push @runs, [$r->[0], $r->[0], $r->[1]]; }
+          }
+          for my $run (@runs) {
+            my ($from, $to, $hash) = @$run;
+            my $lines = $from == $to ? $from : "$from-$to";
+            if ($hash =~ /^0+$/) { printf "%-9s %s  uncommitted\n", $lines, substr($hash, 0, 7); }
+            else { printf "%-9s %s  %s  %s\n", $lines, substr($hash, 0, 7),
+                     strftime("%Y-%m-%d", localtime $time{$hash}), $subj{$hash}; }
+          }'
+        cmd_output=$(printf '%s\n' "$porcelain" | perl -MPOSIX=strftime -e "$perl_shape" 2>&1) || exit_code=$?
+      else
+        cmd_output="$porcelain"
       fi
       ;;
 

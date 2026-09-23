@@ -71,7 +71,7 @@ Ask the user to which degree the agent should be able to participate in Git code
 
 - **Read-only** — The user reviews all code changes in the IDE and makes commits manually.
   The agent only receives tools to explore and modify the current working tree 
-  (`git_status`, `git_diff`, `git_rm`, `git_mv`).
+  (`git_status`, `git_log`, `git_show`, `git_diff`, `git_blame`, `git_rm`, `git_mv`).
 - **Commit** — The user reviews and amends finished commits by the agent and pushes them manually.
   The agent receives read tools plus `git_commit`.
 - **Full** — The agent can interact with git fully autonomously.
@@ -185,7 +185,7 @@ For each file that mentions specific shell commands:
    e.g. "use the `mcp__bash__pytest` tool" instead of "run `pytest`".
 2. Where rules reference the `Bash` tool by name, remove or rephrase those references.
    In particular, replace references in `agents/` frontmatter field `tools` with suitable mcp tools.
-   In custom explorer agents, these are typically the `mcp__bash__git_log` and `mcp__bash__git_show` tools.
+   In custom explorer agents, these are typically: `mcp__bash__git_log`, `mcp__bash__git_show`, `mcp__bash__git_blame`
 
 ### 3d — Update Settings
 
