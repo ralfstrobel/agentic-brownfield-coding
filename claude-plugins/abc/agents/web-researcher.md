@@ -3,9 +3,9 @@ name: web-researcher
 description: >
   Research questions via web search when the answer is not available in the codebase or training data.
   Can look up current library documentation, API references, changelogs, best practices, and technical solutions.
-model: haiku
-effort: low
-permissionMode: plan
+model: sonnet
+effort: medium
+omitClaudeMd: true
 tools: WebSearch, WebFetch
 ---
 
