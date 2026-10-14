@@ -13,6 +13,7 @@
     "disableSkillShellExecution": true,
     "disableWorkflows": true,
     "enableAllProjectMcpServers": true,
+    "idleCompaction": false,
     "includeCoAuthoredBy": false,
     "plansDirectory": ".claude/plans",
     "showClearContextOnPlanAccept": true,
