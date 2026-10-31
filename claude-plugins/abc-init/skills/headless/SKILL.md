@@ -120,7 +120,7 @@ So `--disallowedTools` is an effective way to define a tool blacklist when use o
 When generating or reviewing content for `.md` prompt files, you are writing for other AI coding agents.
 Follow these principles to optimally tailor your instructions and flag violations to the user:
 
-- **Concise** — Minimize token usage. Prefer keywords and terse bullet points over prose.
+- **Concise** — Minimize token usage. Prefer keywords and telegraphic phrasing over full prose.
 - **Structured** — Use compact Markdown to delineate connected aspects.
 - **Actionable** — Generate concrete operational directives, not abstract guidelines.
   A headless agent in particular has no one to ask for clarification. Be very prescriptive and leave no ambiguities.

@@ -28,7 +28,7 @@ while continuing to speak to the user in the language of their choice.
 When generating content for `.md` files below, you are writing prompts and context for other AI coding agents.
 Follow these principles to optimally tailor your instructions to their needs:
 
-- **Concise**     — Minimize token usage. Prefer keywords and terse bullet points over prose.
+- **Concise**     — Minimize token usage. Prefer keywords and telegraphic phrasing over full prose.
 - **Structured**  — Use compact Markdown to delineate connected aspects.
 - **Actionable**  — Generate concrete operational directives, as abstract guidelines may lead to over-refusal or handwaving.
                     Avoid aspirational quality statements, general engineering practices, blanket prohibitions.

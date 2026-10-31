@@ -106,7 +106,7 @@ Do not list specific class members, only refer to entire files or classes by nam
 
 You are writing instructions for other AI coding agents.
 Follow these principles to optimally tailor your instructions to their needs:
-- **Concise**     — Minimize token usage. Prefer keywords and enumeration over prose.
+- **Concise**     — Minimize token usage. Prefer keywords and telegraphic phrasing over full prose.
                     No verbose introductions or concept explanations.
 - **Structured**  — Use compact Markdown to delineate connected aspects.
 - **Actionable**  — Generate concrete operational directives, not abstract guidelines.
